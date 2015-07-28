@@ -1,0 +1,9 @@
+Package: com.wizage.bemeplus
+Name: Beme++
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Fucking with beme
+Maintainer: wizage
+Author: wizage
+Section: Tweaks
