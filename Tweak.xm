@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "KMMedia.h"
 
 @interface BMStackModel : NSObject
 
@@ -73,7 +74,19 @@ Currently this is my try at converting videos but it seems really wrong haha :P 
 %new(v@:?)
 -(void)convertVideo: (NSURL *) url
 {
+    NSString *resultURLString;
+    NSURL *resultURL;
+    NSMutableArray *mtsAssets = nil;
+    NSArray *tsAssets = [NSMutableArray arrayWithCapacity:1];
+    KMMediaAsset *mp4Asset;
 
+    [mtsAssets addObject:[KMMediaAsset assetWithURL:url withFormat:KMMediaFormatTS]];
+    tsAssets = [mtsAssets copy];
+    resultURLString = [NSTemporaryDirectory() stringByAppendingPathComponent:@"result.mp4" ];
+    resultURL = [NSURL fileURLWithPath:resultURLString];
+    mp4Asset = [KMMediaAsset assetWithURL:resultURL withFormat:KMMediaFormatMP4];
+    KMMediaAssetExportSession *tsToMP4ExportSession = [[KMMediaAssetExportSession alloc] initWithInputAssets:tsAssets];
+    tsToMP4ExportSession.outputAssets = @[mp4Asset];
 }
 
 %end
