@@ -1,4 +1,3 @@
-
 /*
  *			         TS2MP4 Pod
  *
@@ -25,8 +24,23 @@
  *
  */
 
-#ifdef DEBUG
-#define ALog(...) [[NSAssertionHandler currentHandler] handleFailureInFunction:[NSString stringWithCString:__PRETTY_FUNCTION__ encoding:NSUTF8StringEncoding] file:[NSString stringWithCString:__FILE__ encoding:NSUTF8StringEncoding] lineNumber:__LINE__ description:__VA_ARGS__]
-#else
-#define ALog(...) do { } while (0)
-#endif
+
+#import <Foundation/Foundation.h>
+#import "KMMediaFormat.h"
+
+@interface KMMediaAsset : NSObject
+
+@property (nonatomic, readonly) KMMediaFormat format;
+@property (nonatomic, readonly, strong) NSURL *url;
+
+/**
+ Returns an instance of KMMediaAsset for inspection of a media resource.
+ @param url An instance of NSURL that represent the path to the media file
+ @param format The format in which the data in the file are stored
+ @return An instance of KMMediaAsset.
+ */
+
++ (id)assetWithURL:(NSURL *)url withFormat:(KMMediaFormat)format;
+
+
+@end
