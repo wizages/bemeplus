@@ -1,9 +1,9 @@
-ARCHS = armv7 arm64
+
 include theos/makefiles/common.mk
 
 TWEAK_NAME = Beme
 Beme_FILES = Tweak.xm
-Beme_FRAMEWORKS = UIKit AVFoundation CoreMedia
+Beme_FRAMEWORKS = UIKit AVFoundation Foundation
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
