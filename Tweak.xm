@@ -14,7 +14,7 @@
     NSMutableArray *tsArray;
     NSData *urlData; //actual data of m3u8 file or ts file
     int count; //count for the for loop
-    NSString *directoryUrl; //file location url
+    //NSString *directoryUrl; //file location url
     NSString *downloadUrlString; //m3u8 download url string
     NSString *tsDownloadUrlString; //ts download url string
     NSURL *downloadUrl; //m3u8 download url
@@ -71,6 +71,12 @@
         * or no you would set the tsInfo.shouldDownload flag.
         */
         HBLogDebug(@"tsArray contains: %@", tsArray);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSUInteger count;
+            TSInfo *tsInfo;
+            NSData *urlData;
+            NSString *directoryUrl;
+            HBLogDebug(@"Array count: %ld", (long) [tsArray count]);
         for (count = 0; count < [tsArray count]; count++)
         {
             tsInfo = [tsArray objectAtIndex:count];
@@ -87,6 +93,7 @@
                 }
             }
         }
+        });
     }
     return %orig;
 }
@@ -97,13 +104,14 @@
 %new(v@:?)
 -(void)convertVideo: (NSString *) fileName
 {
-        HBLogDebug(@"Start generating task");
+    HBLogDebug(@"Start generating task");
     NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath: @"/usr/bin/ffmpeg"];
     [task setCurrentDirectoryPath: NSTemporaryDirectory()];
     [task setArguments: [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"%@.ts", fileName] , @"-acodec", @"copy", @"-vcodec", @"copy", [NSString stringWithFormat:@"%@.mov", fileName], nil]];
     [task launch];
     HBLogDebug(@"Done");
+    [self importToPhotoAlbum:fileName];
 }
 
 /*
@@ -114,7 +122,12 @@
 %new(v@:?)
 -(void) importToPhotoAlbum: (NSString *) fileName
 {
-    //To be added soon!
+    //NSString *directoryUrl;
+    UISaveVideoAtPathToSavedPhotosAlbum([NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mov", fileName]], nil, nil, nil);
+    //directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.ts", fileName]];
+    //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL];
+    //directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mov", fileName]];
+    //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL];
 }
 
 %end
