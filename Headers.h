@@ -1,7 +1,7 @@
 // download iOS Console: http://lemonjar.com/iosconsole/ Set search field to "[bemeplus]:"
 // OR 
 // # deviceconsole -p beme | grep bemeplus
-#define NSLog(fmt, ...) NSLog((@"[bemeplus]: " fmt), ##__VA_ARGS__)
+//#define NSLog(fmt, ...) NSLog((@"[bemeplus]: " fmt), ##__VA_ARGS__)
 
 @interface BMPlayerViewController : UIViewController
 - (void)onNoLongerTouching;

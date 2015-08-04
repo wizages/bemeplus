@@ -1,98 +1,120 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+//#import <Spex/Spex.h>
+#include "NSTask.h"
+#include "BMFeedViewController.h"
+#include "TSInfo.h"
 #import "Headers.h"
-#import <Spex/Spex.h>
-
-@interface BMStackModel : NSObject
-
-@property(copy) NSURL * streamURL;
-
-@end
 
 
 %hook BMFeedViewController
 
 -(BMStackModel *) currentPlayingStack {
     NSArray *m3u8Data; //contents of m3u8
+    NSMutableArray *tsArray;
     NSData *urlData; //actual data of m3u8 file or ts file
-    NSInteger count; //count for the for loop
+    int count; //count for the for loop
     NSString *directoryUrl; //file location url
-    NSString *documentDirectory; //file location url string
     NSString *downloadUrlString; //m3u8 download url string
     NSString *tsDownloadUrlString; //ts download url string
     NSURL *downloadUrl; //m3u8 download url
-    NSURL *tsDownloadUrl; //ts download url
-
+    BMUserModel *userInfo;
+    Quality videoQuality;
+    TSInfo *tsInfo;
     %orig;
 
+    /*
+    Initialize variables;
+    */
+    tsArray = [[NSMutableArray alloc] init];
     downloadUrl = %orig.streamURL;
+    userInfo = %orig.user;
     downloadUrlString = [downloadUrl absoluteString];
+    videoQuality = high;
 
-    //Here we changed the letter from A-C depending on what quality type we want. A being lowest and C being highest
-    downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"C"]; 
+    /*
+    Here we changed the letter from A-C depending on what quality type we want. A being lowest and C being highest
+    */
+    if (videoQuality == high){
+        downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"C"]; 
+    }
+    else if (videoQuality == medium){
+        downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"B"]; 
+    }
+    else {
+        downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"A"]; 
+    }
+
+    //HBLogDebug(@"%@", downloadUrlString);
     downloadUrl = [NSURL URLWithString:downloadUrlString];
-
     urlData = [NSData dataWithContentsOfURL:downloadUrl];
 
     if (urlData)
     {
-        documentDirectory = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.txt" ]; // This will need to be removed now but being kept for debuging purposes.
-        [urlData writeToFile:documentDirectory atomically:YES];
-        m3u8Data = [[NSString stringWithContentsOfFile:documentDirectory
-                                              encoding:NSUTF8StringEncoding
-                                                 error:nil] componentsSeparatedByString:@"\n"];
+        m3u8Data = [[[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding] componentsSeparatedByString:@"\n"];
 
-        count = 6; //The offset for the .m3u8 file
+        HBLogDebug(@"Testing shit, : %@", m3u8Data);
         for (count = 6; count < [m3u8Data count]; count = count + 2)
         {
             tsDownloadUrlString = [m3u8Data objectAtIndex:count];
-            tsDownloadUrl = [NSURL fileURLWithPath:tsDownloadUrlString];
-            
-            urlData = [NSData dataWithContentsOfURL:tsDownloadUrl];
+            tsInfo = [[TSInfo alloc] initWithURL:tsDownloadUrlString];
+            tsInfo.fileName = [NSString stringWithFormat:@"%@_%ld%ld",userInfo.displayName, (long)%orig.identifier, (long)[tsArray count]];
+            tsInfo.shouldDownload = YES; // This will allows us to select which videos to download.
+            [tsArray addObject:tsInfo];
+            HBLogDebug(@"tsInfo contains: %@, %d, %@", tsInfo.fileName, tsInfo.shouldDownload, tsInfo.tsURL);
+        }
 
-            if (urlData)
+        /*
+        * Created this array so that you can make the display UI here.
+        * and then populate saying chose which videos from the count
+        * of the size of the tsArray size. And then if they say yes
+        * or no you would set the tsInfo.shouldDownload flag.
+        */
+        HBLogDebug(@"tsArray contains: %@", tsArray);
+        for (count = 0; count < [tsArray count]; count++)
+        {
+            tsInfo = [tsArray objectAtIndex:count];
+            if ( tsInfo.shouldDownload )
             {
-                directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.ts" ];
-                [urlData writeToFile:directoryUrl atomically:YES];
-                /*
-                * This is where the conversion function should be called!
-                */
-
-                SEL URLConvert = @selector(convertVideo:);
-                [self performSelector:URLConvert withObject: tsDownloadUrl];
+                urlData = [NSData dataWithContentsOfURL:tsInfo.tsURL];
+                if (urlData)
+                {
+                    HBLogDebug(@"Testing shit");
+                    directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.ts", tsInfo.fileName]];
+                    [urlData writeToFile:directoryUrl atomically:YES];
+                    [self convertVideo:tsInfo.fileName];
+                    //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL]; //Clean up the .ts file you dont need it no more
+                }
             }
         }
     }
     return %orig;
 }
 
+/*
+* This is a new fuction that will convert the video from .ts to .mov
+*/
+%new(v@:?)
+-(void)convertVideo: (NSString *) fileName
+{
+        HBLogDebug(@"Start generating task");
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: @"/usr/bin/ffmpeg"];
+    [task setCurrentDirectoryPath: NSTemporaryDirectory()];
+    [task setArguments: [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"%@.ts", fileName] , @"-acodec", @"copy", @"-vcodec", @"copy", [NSString stringWithFormat:@"%@.mov", fileName], nil]];
+    [task launch];
+    HBLogDebug(@"Done");
+}
 
 /*
-Currently this is my try at converting videos but it seems really wrong haha :P go figures
--wizage
+* This is a new fuction that will import the new .mov video to
+* the photo album and then delete the tmp file. Later we can
+* also create a phantom like vault.
 */
-
-/**
- * You don't have to manually define the method signature, one will be generated at build time - nin9tyfour
- */
 %new(v@:?)
--(void)convertVideo: (NSURL *) url
+-(void) importToPhotoAlbum: (NSString *) fileName
 {
-	/*
-    NSString *resultURLString;
-    NSURL *resultURL;
-    NSMutableArray *mtsAssets = nil;
-    NSArray *tsAssets = [NSMutableArray arrayWithCapacity:1];
-    KMMediaAsset *mp4Asset;
-
-    [mtsAssets addObject:[KMMediaAsset assetWithURL:url withFormat:KMMediaFormatTS]];
-    tsAssets = [mtsAssets copy];
-    resultURLString = [NSTemporaryDirectory() stringByAppendingPathComponent:@"result.mp4" ];
-    resultURL = [NSURL fileURLWithPath:resultURLString];
-    mp4Asset = [KMMediaAsset assetWithURL:resultURL withFormat:KMMediaFormatMP4];
-    KMMediaAssetExportSession *tsToMP4ExportSession = [[KMMediaAssetExportSession alloc] initWithInputAssets:tsAssets];
-    tsToMP4ExportSession.outputAssets = @[mp4Asset];
-    */
+    //To be added soon!
 }
 
 %end
@@ -145,6 +167,7 @@ static NSURL *lastURL;
 	 *
 	 * - nin9tyfour
 	 */
+     %orig;
 	if (shouldEndPlayback)
 	{
 		%orig;
@@ -165,6 +188,7 @@ static NSURL *lastURL;
 	{
 		[self bmp_showOverlayControls];
 	}
+    %orig;
 }
 
 %end

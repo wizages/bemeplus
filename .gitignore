@@ -79,3 +79,5 @@ obj
 *.deb
 .tmp
 theos
+*.sublime-project
+*.sublime-workspace
