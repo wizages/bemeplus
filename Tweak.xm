@@ -6,6 +6,16 @@
 #include "TSInfo.h"
 #import "Headers.h"
 
+static void convertVideoAtPath(NSString *path)
+{
+    HBLogDebug(@"Start generating task");
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: @"/usr/bin/ffmpeg"];
+    [task setCurrentDirectoryPath: NSTemporaryDirectory()];
+    [task setArguments: [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"%@.ts", path] , @"-acodec", @"copy", @"-vcodec", @"copy", [NSString stringWithFormat:@"%@.mov", path], nil]];
+    [task launch];
+    HBLogDebug(@"Done");
+}
 
 %hook BMFeedViewController
 
@@ -101,16 +111,10 @@
 /*
 * This is a new fuction that will convert the video from .ts to .mov
 */
+
 %new(v@:?)
--(void)convertVideo: (NSString *) fileName
-{
-    HBLogDebug(@"Start generating task");
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath: @"/usr/bin/ffmpeg"];
-    [task setCurrentDirectoryPath: NSTemporaryDirectory()];
-    [task setArguments: [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"%@.ts", fileName] , @"-acodec", @"copy", @"-vcodec", @"copy", [NSString stringWithFormat:@"%@.mov", fileName], nil]];
-    [task launch];
-    HBLogDebug(@"Done");
+-(void)convertVideo: (NSString *) fileName{
+    convertVideoAtPath(fileName);
     [self importToPhotoAlbum:fileName];
 }
 
@@ -134,6 +138,59 @@
 
 %hook BMPlayerViewController
 
+static NSArray *bmp_arrayOfURLSInDescendingQualityFromURL(NSURL *masterURL){
+    M3U8MasterPlaylist *masterPlaylist = [[M3U8MasterPlaylist alloc] initWithContentOfURL:masterURL error:nil];
+
+    M3U8ExtXStreamInfList *streamList = masterPlaylist.xStreamList;
+    [streamList sortByBandwidthInOrder:NSOrderedDescending];
+
+    NSURL *streamURL = [[streamList firstStreamInf] m3u8URL];
+    M3U8MediaPlaylist *playList = [[M3U8MediaPlaylist alloc] initWithContentOfURL:streamURL error:nil];
+    M3U8SegmentInfoList *segments = [playList segmentList];
+
+    NSMutableArray *mediaURLS = [NSMutableArray array];
+    for (int i = 0; i < segments.count; ++i)
+    {
+        M3U8SegmentInfo *segment = [segments segmentInfoAtIndex:i];
+        NSURL *url = segment.mediaURL;
+        if (url)
+        {
+            [mediaURLS addObject:url];
+        }
+    }
+
+    return mediaURLS;
+}
+
+static NSString *directoryForStack(BMStackModel *stack){
+    return [NSString stringWithFormat:@"%li", (long)[stack identifier]];
+}
+
+static NSArray *downloadFilesWithStack(NSArray *urlArray, BMStackModel *stack){
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue.maxConcurrentOperationCount = 4;
+    NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
+    [[NSFileManager defaultManager] createDirectoryAtPath:basePath withIntermediateDirectories:YES attributes:nil error:nil]; 
+    NSMutableArray *savedPaths = [NSMutableArray array];
+    NSLog(@"Base Path: %@", basePath);
+    for (NSURL* currentURL in urlArray)
+    {
+        NSURLRequest *request = [NSURLRequest requestWithURL:currentURL];
+        AFHTTPRequestOperation *operation = [[%c(AFHTTPRequestOperation) alloc] initWithRequest:request];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSString *filename = [operation.response suggestedFilename];
+            NSString *savePath = [basePath stringByAppendingPathComponent:filename];
+            NSLog(@"Savepath: %@", savePath);
+            [responseObject writeToFile:savePath  atomically:YES];
+            NSLog(@"Downloaded: %@", filename);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
+        [queue addOperation:operation];
+    }
+    return savedPaths;
+}
+
 /**
  * Whether or not playback should end and close the player view controller. This allows users to "tap to play" rather than tap and hold.
  * Obtain a reference to the last URL of the M3U8 playlist.
@@ -141,7 +198,46 @@
  * - nin9tyfour
  */
 static BOOL shouldEndPlayback;
-static NSURL *lastURL;
+static UIToolbar *toolBar;
+
+- (void)viewDidLoad{
+    %orig;
+    [self bmp_setupOverlayControls];
+
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bmp_tapped)];
+    tapRecognizer.numberOfTapsRequired = 1;
+    tapRecognizer.delegate = self;
+    [self.view addGestureRecognizer:tapRecognizer];
+}
+
+%new
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    // UIToolBar and it's buttons are subclasses of UIControl
+    NSLog(@"TOUCH! %@", touch.view);
+    if ([touch.view isDescendantOfView:toolBar]) {
+        NSLog(@"IS A DESCENDANT!");
+        return NO;
+    }
+    return YES;
+}
+
+%new
+- (void)bmp_setupOverlayControls{
+    toolBar = [[UIToolbar alloc] initWithFrame:CGRectZero];
+    toolBar.translatesAutoresizingMaskIntoConstraints = NO;
+
+    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_saveTapped)];
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *button2=[[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_closeTapped)];
+
+    [toolBar setItems:@[saveButton, flex, button2]];
+    [self.view addSubview:toolBar];
+
+    NSDictionary *dict = NSDictionaryOfVariableBindings(toolBar);
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:[toolBar]|" options:0 metrics:nil views:dict]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[toolBar]|" options:0 metrics:nil views:dict]];
+    toolBar.alpha = 0;
+}
 
 /**
  * Shows overlay, will hopefully include options to save, replay, etc.
@@ -149,12 +245,15 @@ static NSURL *lastURL;
  * - nin9tyfour
  */
 %new
-- (void)bmp_showOverlayControls{
-	UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-	[button setTitle:@"Save" forState:UIControlStateNormal];
-	[button addTarget:self action:@selector(replay) forControlEvents:UIControlEventTouchUpInside];
-	button.frame = CGRectMake(80.0, 210.0, 160.0, 40.0);
-	[self.view addSubview:button];
+- (void)bmp_toggleOverlayControls{
+    [UIView animateWithDuration:0.3 animations:^{
+        toolBar.alpha = toolBar.alpha ? 0.0f : 1.0f;
+    } completion:nil];
+}
+
+%new
+- (NSURL *)bmp_currentURL{
+    return [self stack].streamURL;
 }
 
 /**
@@ -170,8 +269,22 @@ static NSURL *lastURL;
  */
 
 %new
-- (void)bmp_closeTapped{
+- (void)bmp_tapped{
+    [self bmp_toggleOverlayControls];
+}
 
+%new
+- (void)bmp_closeTapped{
+    shouldEndPlayback = YES;
+    [self onNoLongerTouching];
+}
+
+%new
+- (void)bmp_saveTapped{
+    NSLog(@"%@", self.stack);
+    NSArray *urlArray = bmp_arrayOfURLSInDescendingQualityFromURL(self.bmp_currentURL);
+    NSLog(@"URLS: %@", urlArray);
+    downloadFilesWithStack(urlArray, self.stack);
 }
 
 - (void)onNoLongerTouching{
@@ -180,7 +293,6 @@ static NSURL *lastURL;
 	 *
 	 * - nin9tyfour
 	 */
-     %orig;
 	if (shouldEndPlayback)
 	{
 		%orig;
@@ -197,10 +309,6 @@ static NSURL *lastURL;
 	 * 
 	 * - nin9tyfour
 	 */
-	if (lastURL)
-	{
-		[self bmp_showOverlayControls];
-	}
     %orig;
 }
 
