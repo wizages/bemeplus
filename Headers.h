@@ -65,3 +65,5 @@
 - (void)setCompletionBlockWithSuccess:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 @end
+
+typedef enum {high, medium, low} Quality;

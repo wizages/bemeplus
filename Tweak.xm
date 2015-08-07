@@ -5,18 +5,10 @@
 #include "BMFeedViewController.h"
 #include "TSInfo.h"
 #import "Headers.h"
+/*
 
-static void convertVideoAtPath(NSString *path)
-{
-    HBLogDebug(@"Start generating task");
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath: @"/usr/bin/ffmpeg"];
-    [task setCurrentDirectoryPath: NSTemporaryDirectory()];
-    [task setArguments: [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"%@.ts", path] , @"-acodec", @"copy", @"-vcodec", @"copy", [NSString stringWithFormat:@"%@.mov", path], nil]];
-    [task launch];
-    HBLogDebug(@"Done");
-}
-
+*/
+/*
 %hook BMFeedViewController
 
 -(BMStackModel *) currentPlayingStack {
@@ -29,13 +21,12 @@ static void convertVideoAtPath(NSString *path)
     NSString *tsDownloadUrlString; //ts download url string
     NSURL *downloadUrl; //m3u8 download url
     BMUserModel *userInfo;
-    Quality videoQuality;
     TSInfo *tsInfo;
     %orig;
 
     /*
     Initialize variables;
-    */
+    
     tsArray = [[NSMutableArray alloc] init];
     downloadUrl = %orig.streamURL;
     userInfo = %orig.user;
@@ -44,7 +35,7 @@ static void convertVideoAtPath(NSString *path)
 
     /*
     Here we changed the letter from A-C depending on what quality type we want. A being lowest and C being highest
-    */
+    
     if (videoQuality == high){
         downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"C"]; 
     }
@@ -79,7 +70,7 @@ static void convertVideoAtPath(NSString *path)
         * and then populate saying chose which videos from the count
         * of the size of the tsArray size. And then if they say yes
         * or no you would set the tsInfo.shouldDownload flag.
-        */
+        
         HBLogDebug(@"tsArray contains: %@", tsArray);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSUInteger count;
@@ -97,8 +88,8 @@ static void convertVideoAtPath(NSString *path)
                 {
                     HBLogDebug(@"Testing shit");
                     directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.ts", tsInfo.fileName]];
-                    [urlData writeToFile:directoryUrl atomically:YES];
-                    [self convertVideo:tsInfo.fileName];
+                    //[urlData writeToFile:directoryUrl atomically:YES];
+                    //[self convertVideo:tsInfo.fileName];
                     //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL]; //Clean up the .ts file you dont need it no more
                 }
             }
@@ -110,7 +101,7 @@ static void convertVideoAtPath(NSString *path)
 
 /*
 * This is a new fuction that will convert the video from .ts to .mov
-*/
+
 
 %new(v@:?)
 -(void)convertVideo: (NSString *) fileName{
@@ -122,7 +113,7 @@ static void convertVideoAtPath(NSString *path)
 * This is a new fuction that will import the new .mov video to
 * the photo album and then delete the tmp file. Later we can
 * also create a phantom like vault.
-*/
+
 %new(v@:?)
 -(void) importToPhotoAlbum: (NSString *) fileName
 {
@@ -135,16 +126,21 @@ static void convertVideoAtPath(NSString *path)
 }
 
 %end
-
+*/
 %hook BMPlayerViewController
+
+static Quality videoQuality;
+static NSUInteger countFiles;
 
 static NSArray *bmp_arrayOfURLSInDescendingQualityFromURL(NSURL *masterURL){
     M3U8MasterPlaylist *masterPlaylist = [[M3U8MasterPlaylist alloc] initWithContentOfURL:masterURL error:nil];
 
     M3U8ExtXStreamInfList *streamList = masterPlaylist.xStreamList;
     [streamList sortByBandwidthInOrder:NSOrderedDescending];
-
-    NSURL *streamURL = [[streamList firstStreamInf] m3u8URL];
+    HBLogDebug(@"streamlist: %@", streamList);
+    NSURL *streamURL;
+    streamURL = [[streamList extXStreamInfAtIndex:videoQuality] m3u8URL];
+    HBLogDebug(@"streamURL = %@", streamURL);
     M3U8MediaPlaylist *playList = [[M3U8MediaPlaylist alloc] initWithContentOfURL:streamURL error:nil];
     M3U8SegmentInfoList *segments = [playList segmentList];
 
@@ -168,6 +164,8 @@ static NSString *directoryForStack(BMStackModel *stack){
 
 static NSArray *downloadFilesWithStack(NSArray *urlArray, BMStackModel *stack){
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    countFiles = 0;
+    AFHTTPRequestOperation *operation;
     queue.maxConcurrentOperationCount = 4;
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
     [[NSFileManager defaultManager] createDirectoryAtPath:basePath withIntermediateDirectories:YES attributes:nil error:nil]; 
@@ -176,19 +174,38 @@ static NSArray *downloadFilesWithStack(NSArray *urlArray, BMStackModel *stack){
     for (NSURL* currentURL in urlArray)
     {
         NSURLRequest *request = [NSURLRequest requestWithURL:currentURL];
-        AFHTTPRequestOperation *operation = [[%c(AFHTTPRequestOperation) alloc] initWithRequest:request];
+        operation = [[%c(AFHTTPRequestOperation) alloc] initWithRequest:request];
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSString *filename = [operation.response suggestedFilename];
             NSString *savePath = [basePath stringByAppendingPathComponent:filename];
             NSLog(@"Savepath: %@", savePath);
             [responseObject writeToFile:savePath  atomically:YES];
             NSLog(@"Downloaded: %@", filename);
+            [savedPaths addObject:filename];
+            countFiles++;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];
         [queue addOperation:operation];
     }
+    [queue waitUntilAllOperationsAreFinished];
     return savedPaths;
+}
+
+static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
+{
+    HBLogDebug(@"Start generating task");
+    HBLogDebug(@"fileNames: %@", fileNames);
+    NSString *filesConcat = [fileNames componentsJoinedByString: @"|"];
+    NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
+    NSTask *task = [[NSTask alloc] init];
+    NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"\"concat:%@\"", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
+    HBLogDebug(@"Arguments : %@ \n basePath : %@", arguments, basePath);
+    [task setLaunchPath: @"/usr/bin/ffmpeg"];
+    [task setCurrentDirectoryPath: basePath];
+    [task setArguments: arguments];
+    [task launch];
+    HBLogDebug(@"Done");
 }
 
 /**
@@ -200,9 +217,13 @@ static NSArray *downloadFilesWithStack(NSArray *urlArray, BMStackModel *stack){
 static BOOL shouldEndPlayback;
 static UIToolbar *toolBar;
 
+
 - (void)viewDidLoad{
     %orig;
+    shouldEndPlayback = NO;
+    videoQuality = high;
     [self bmp_setupOverlayControls];
+
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bmp_tapped)];
     tapRecognizer.numberOfTapsRequired = 1;
@@ -284,7 +305,9 @@ static UIToolbar *toolBar;
     NSLog(@"%@", self.stack);
     NSArray *urlArray = bmp_arrayOfURLSInDescendingQualityFromURL(self.bmp_currentURL);
     NSLog(@"URLS: %@", urlArray);
-    downloadFilesWithStack(urlArray, self.stack);
+    NSArray *fileNames = downloadFilesWithStack(urlArray, self.stack);
+    HBLogDebug(@"fileNames 2: %@", fileNames);
+    bmp_convertVideoAtPath(fileNames, self.stack);
 }
 
 - (void)onNoLongerTouching{
@@ -309,7 +332,10 @@ static UIToolbar *toolBar;
 	 * 
 	 * - nin9tyfour
 	 */
-    %orig;
+    [self bmp_toggleOverlayControls];
+    if (shouldEndPlayback){
+        %orig;
+    }
 }
 
 %end

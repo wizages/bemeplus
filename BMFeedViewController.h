@@ -10,8 +10,6 @@
 -(void) importToPhotoAlbum: (NSString *) fileName;
 
 
-typedef enum {low, medium, high} Quality;
-
 @end
 
 @interface BMUserModel : NSObject
