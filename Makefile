@@ -11,7 +11,7 @@ export ARCHS = armv7 arm64
 
 # Include libraries in the local tweak directory, saves copying them to your theos dir.
 Beme_LDFLAGS += -L./extras/lib
-ADDITIONAL_OBJCFLAGS += -I./extras/include
+ADDITIONAL_OBJCFLAGS += -fobjc-arc -I./extras/include
 
 TWEAK_NAME = Beme
 Beme_FILES = Tweak.xm TSInfo.m

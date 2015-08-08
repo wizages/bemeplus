@@ -9,6 +9,8 @@
 
 -(void) importToPhotoAlbum: (NSString *) fileName;
 
+- (void)playVideoFromCellAtIndexPath:(NSIndexPath *)arg1;
+
 
 @end
 

@@ -127,6 +127,31 @@
 
 %end
 */
+
+%subclass BMPHTTPRequestOperation : AFHTTPRequestOperation
+
+%new
+- (NSString *)savePath {
+    return objc_getAssociatedObject(self, @selector(savePath));
+}
+ 
+%new
+- (void)setSavePath:(NSString *)value {
+    objc_setAssociatedObject(self, @selector(savePath), value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+%new
+- (NSNumber *)index {
+    return objc_getAssociatedObject(self, @selector(savePath));
+}
+ 
+%new
+- (void)setIndex:(NSNumber *)value {
+    objc_setAssociatedObject(self, @selector(savePath), value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+%end
+
 %hook BMPlayerViewController
 
 static Quality videoQuality;
@@ -137,10 +162,8 @@ static NSArray *bmp_arrayOfURLSInDescendingQualityFromURL(NSURL *masterURL){
 
     M3U8ExtXStreamInfList *streamList = masterPlaylist.xStreamList;
     [streamList sortByBandwidthInOrder:NSOrderedDescending];
-    HBLogDebug(@"streamlist: %@", streamList);
     NSURL *streamURL;
     streamURL = [[streamList extXStreamInfAtIndex:videoQuality] m3u8URL];
-    HBLogDebug(@"streamURL = %@", streamURL);
     M3U8MediaPlaylist *playList = [[M3U8MediaPlaylist alloc] initWithContentOfURL:streamURL error:nil];
     M3U8SegmentInfoList *segments = [playList segmentList];
 
@@ -162,34 +185,54 @@ static NSString *directoryForStack(BMStackModel *stack){
     return [NSString stringWithFormat:@"%li", (long)[stack identifier]];
 }
 
-static NSArray *downloadFilesWithStack(NSArray *urlArray, BMStackModel *stack){
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
     countFiles = 0;
-    AFHTTPRequestOperation *operation;
-    queue.maxConcurrentOperationCount = 4;
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
     [[NSFileManager defaultManager] createDirectoryAtPath:basePath withIntermediateDirectories:YES attributes:nil error:nil]; 
     NSMutableArray *savedPaths = [NSMutableArray array];
-    NSLog(@"Base Path: %@", basePath);
+
+    NSMutableArray *mutableOperations = [NSMutableArray array];
+
     for (NSURL* currentURL in urlArray)
     {
         NSURLRequest *request = [NSURLRequest requestWithURL:currentURL];
-        operation = [[%c(AFHTTPRequestOperation) alloc] initWithRequest:request];
+        NSInteger index = [urlArray indexOfObject:currentURL];
+
+        BMPHTTPRequestOperation *operation = [[%c(BMPHTTPRequestOperation) alloc] initWithRequest:request];
+        __weak BMPHTTPRequestOperation *weakOperation = operation;
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSString *filename = [operation.response suggestedFilename];
             NSString *savePath = [basePath stringByAppendingPathComponent:filename];
-            NSLog(@"Savepath: %@", savePath);
+            // NSLog(@"Savepath: %@", savePath);
             [responseObject writeToFile:savePath  atomically:YES];
-            NSLog(@"Downloaded: %@", filename);
+            // NSLog(@"Downloaded: %@", filename);
             [savedPaths addObject:filename];
+            [weakOperation setSavePath:savePath];
+            [weakOperation setIndex:@(index)];
             countFiles++;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];
-        [queue addOperation:operation];
+
+        [mutableOperations addObject:operation];
     }
-    [queue waitUntilAllOperationsAreFinished];
-    return savedPaths;
+
+    NSArray *operations = [%c(AFURLConnectionOperation) batchOfRequestOperations:mutableOperations progressBlock:^(NSUInteger numberOfFinishedOperations, NSUInteger totalNumberOfOperations) {
+        NSLog(@"%lu of %lu complete", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
+    } completionBlock:^(NSArray *operations) {
+        NSLog(@"All downloads are complete.");
+        NSMutableArray *savePaths = [NSMutableArray array];
+        for (BMPHTTPRequestOperation *op in operations){
+            [savePaths addObject:op.savePath];
+            // NSLog(@"%@\t\t%li", op.savePath, (long int)[[op index] intValue]);
+        }
+        bmp_convertVideoAtPath(savePaths, stack);
+    }];
+
+    NSOperationQueue *downloadQueue = [[NSOperationQueue alloc] init];
+    downloadQueue.name = @"Download Queue";
+    downloadQueue.maxConcurrentOperationCount = 4;
+    [downloadQueue addOperations:operations waitUntilFinished:NO];
 }
 
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
@@ -302,12 +345,8 @@ static UIToolbar *toolBar;
 
 %new
 - (void)bmp_saveTapped{
-    NSLog(@"%@", self.stack);
     NSArray *urlArray = bmp_arrayOfURLSInDescendingQualityFromURL(self.bmp_currentURL);
-    NSLog(@"URLS: %@", urlArray);
-    NSArray *fileNames = downloadFilesWithStack(urlArray, self.stack);
-    HBLogDebug(@"fileNames 2: %@", fileNames);
-    bmp_convertVideoAtPath(fileNames, self.stack);
+    saveFilesWithStack(urlArray, self.stack);
 }
 
 - (void)onNoLongerTouching{
@@ -339,3 +378,83 @@ static UIToolbar *toolBar;
 }
 
 %end
+
+
+%group TapToOpen
+%hook BMFeedViewController
+
+/**
+ * Used to obtain a reference to feed view controller easily, using cycript.
+ */
+// - (void)viewDidLoad{
+//     %orig;
+//     feedVC = self;
+// }
+// static id feedVC;
+// %new
+// + (id)sharedInstance{
+//     return feedVC;
+// }
+
+%new
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    BMFeedCell *cell = (BMFeedCell *)[tableView cellForRowAtIndexPath:indexPath];
+    [self playVideoFromCellAtIndexPath:indexPath];
+    [cell setHighlighted:YES animated:false];
+}
+
+%end
+
+%hook BMHoldToWatchView
+
+- (void)flashHoldAnimation{
+    
+}
+
+%end
+
+%end
+
+static BOOL afnetworkingapi_supported(void){
+    /**
+     * It is useful to check if the AFNetworking API is still current/useful,
+     * will prevent any crashes if they switch away from it.
+     */
+    return (%c(AFHTTPRequestOperation) &&
+        [%c(AFHTTPRequestOperation) instancesRespondToSelector:@selector(setCompletionBlockWithSuccess:failure:)] &&
+        %c(AFURLConnectionOperation) &&
+        [%c(AFURLConnectionOperation) respondsToSelector:@selector(batchOfRequestOperations:progressBlock:completionBlock:)]
+        );
+}
+
+static BOOL version_supported(void){
+    return afnetworkingapi_supported();
+}
+
+%group UnsupportedVersionHooks
+
+%hook BMFeedViewController
+
+- (void)viewDidLoad{
+    %orig;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Information"
+        message: @"BemePlus is not currently supported on this application version."
+        delegate: nil
+        cancelButtonTitle:@"OK"
+        otherButtonTitles:nil];
+    [alert show];
+}
+
+%end
+
+%end
+
+%ctor{
+    if (version_supported() == NO)
+    {
+        %init(UnsupportedVersionHooks);
+    }else{
+        %init();
+        %init(TapToOpen);
+    }
+}
