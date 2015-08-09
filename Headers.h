@@ -7,8 +7,7 @@
 
 
 typedef enum {high, medium, low} Quality;
-
-static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack);
+@class BMStackModel;
 
 @interface BMPlayerViewController : UIViewController <UIGestureRecognizerDelegate>
 @property(nonatomic, weak) BMStackModel *stack;

@@ -4,6 +4,10 @@
 #include "NSTask.h"
 #include "BMFeedViewController.h"
 #import "Headers.h"
+#import "BMPAlertHandler.h"
+
+static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack);
+static BOOL ffmpeg_installed(void);
 
 
 /*
@@ -184,6 +188,10 @@ static NSString *directoryForStack(BMStackModel *stack){
 }
 
 static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
+    if (ffmpeg_installed() == NO)
+    {
+        return;
+    }
     countFiles = 0;
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
     [[NSFileManager defaultManager] createDirectoryAtPath:basePath withIntermediateDirectories:YES attributes:nil error:nil]; 
@@ -233,6 +241,26 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
     [downloadQueue addOperations:operations waitUntilFinished:NO];
 }
 
+
+static NSString *ffmpegPath = @"/usr/bin/ffmpeg";
+
+static BOOL ffmpeg_installed(void){
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:ffmpegPath isDirectory:NULL])
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Information"
+            message: @"ffmpeg is required in order to save videos."
+            delegate: nil
+            cancelButtonTitle:@"Cancel"
+            otherButtonTitles:@"Install ffmpeg", nil];
+        alert.tag = BMPAlertTypeFFMpeg;
+        alert.delegate = [BMPAlertHandler sharedInstance];
+        [alert show];
+        return NO;
+    }
+    return YES;
+}
+
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
 {
     NSLog(@"Start converting.");
@@ -241,12 +269,27 @@ static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
     NSString *filesConcat = [fileNames componentsJoinedByString: @"|"];
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
     NSTask *task = [[NSTask alloc] init];
+
+    NSPipe * out = [NSPipe pipe];
+    [task setStandardOutput:out];
+
     NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"\"concat:%@\"", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
     NSLog(@"Arguments : %@ \n basePath : %@", arguments, basePath);
-    [task setLaunchPath: @"/usr/bin/ffmpeg"];
+
+    if (ffmpeg_installed() == NO)
+    {
+        return;
+    }
+
+    [task setLaunchPath: ffmpegPath];
     [task setCurrentDirectoryPath: basePath];
     [task setArguments: arguments];
     [task launch];
+
+    NSFileHandle * read = [out fileHandleForReading];
+    NSData * dataRead = [read readDataToEndOfFile];
+    NSString * stringRead = [[NSString alloc] initWithData:dataRead encoding:NSUTF8StringEncoding];
+    NSLog(@"output: %@", stringRead);
     NSLog(@"Done");
 }
 

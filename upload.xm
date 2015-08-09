@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "Headers/BMClip.h"
 #import "Headers/BMCurrentUserInfoViewController.h"
+#import "Headers.h"
 /*
 This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Library/Application Support/
 */
