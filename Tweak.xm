@@ -273,7 +273,7 @@ static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
     NSPipe * out = [NSPipe pipe];
     [task setStandardOutput:out];
 
-    NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"\"concat:%@\"", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
+    NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"concat:%@", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
     NSLog(@"Arguments : %@ \n basePath : %@", arguments, basePath);
 
     if (ffmpeg_installed() == NO)
