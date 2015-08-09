@@ -14,7 +14,7 @@ Beme_LDFLAGS += -L./extras/lib
 ADDITIONAL_OBJCFLAGS += -fobjc-arc -I./extras/include
 
 TWEAK_NAME = Beme
-Beme_FILES = Tweak.xm TSInfo.m
+Beme_FILES = Tweak.xm upload.xm
 Beme_FRAMEWORKS = UIKit AVFoundation Foundation CoreGraphics
 Beme_LIBRARIES = M3U8
 

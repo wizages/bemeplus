@@ -6,8 +6,8 @@
 
 #import "BMViewController.h"
 
-#import "UITableViewDataSource.h"
-#import "UITableViewDelegate.h"
+//#import "UITableViewDataSource.h"
+//#import "UITableViewDelegate.h"
 
 @class NSArray, NSString, UITableView;
 
@@ -19,7 +19,7 @@
 
 @property(retain, nonatomic) NSArray *dataSource; // @synthesize dataSource=_dataSource;
 @property(retain, nonatomic) UITableView *tableView; // @synthesize tableView=_tableView;
-- (void).cxx_destruct;
+//- (void).cxx_destruct;
 - (void)updateSettingsWithFollowingCount:(id)arg1 followerCount:(id)arg2;
 - (void)tableView:(id)arg1 didSelectRowAtIndexPath:(id)arg2;
 - (id)tableView:(id)arg1 cellForRowAtIndexPath:(id)arg2;
@@ -38,10 +38,13 @@
 - (void)viewDidLoad;
 - (void)dealloc;
 
+
+- (void)bemePage;
+- (void)upload;
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;
 @property(readonly, copy) NSString *description;
-@property(readonly) unsigned long long hash;
+//@property(readonly) unsigned long long hash;
 @property(readonly) Class superclass;
 
 @end
