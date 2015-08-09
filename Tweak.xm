@@ -142,12 +142,12 @@
 
 %new
 - (NSNumber *)index {
-    return objc_getAssociatedObject(self, @selector(savePath));
+    return objc_getAssociatedObject(self, @selector(index));
 }
  
 %new
 - (void)setIndex:(NSNumber *)value {
-    objc_setAssociatedObject(self, @selector(savePath), value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(index), value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 %end
@@ -223,7 +223,7 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
         NSLog(@"All downloads are complete.");
         NSMutableArray *savePaths = [NSMutableArray array];
         for (BMPHTTPRequestOperation *op in operations){
-            [savePaths addObject:op.savePath];
+            [savePaths addObject:op.savePath.lastPathComponent];
             // NSLog(@"%@\t\t%li", op.savePath, (long int)[[op index] intValue]);
         }
         bmp_convertVideoAtPath(savePaths, stack);
@@ -237,18 +237,19 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
 
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
 {
-    HBLogDebug(@"Start generating task");
-    HBLogDebug(@"fileNames: %@", fileNames);
+    NSLog(@"Start converting.");
+    NSLog(@"Start generating task");
+    NSLog(@"fileNames: %@", fileNames);
     NSString *filesConcat = [fileNames componentsJoinedByString: @"|"];
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
     NSTask *task = [[NSTask alloc] init];
     NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"\"concat:%@\"", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
-    HBLogDebug(@"Arguments : %@ \n basePath : %@", arguments, basePath);
+    NSLog(@"Arguments : %@ \n basePath : %@", arguments, basePath);
     [task setLaunchPath: @"/usr/bin/ffmpeg"];
     [task setCurrentDirectoryPath: basePath];
     [task setArguments: arguments];
     [task launch];
-    HBLogDebug(@"Done");
+    NSLog(@"Done");
 }
 
 /**
