@@ -4,15 +4,14 @@
 //     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2013 by Steve Nygard.
 //
 
-#import "MTLModel.h"
+//#import "MTLModel.h"
 
-#import "BMClipProtocol.h"
-#import "MTLJSONSerializing.h"
+//#import "BMClipProtocol.h"
+//#import "MTLJSONSerializing.h"
 
 @class NSDate, NSNumber, NSString, NSURL;
 
-@interface BMClip : MTLModel <MTLJSONSerializing, BMClipProtocol>
-{
+@interface BMClip : NSObject{
     NSString *_identifier;
     NSDate *_recordedAt;
     NSNumber *_latitude;
@@ -47,7 +46,6 @@
 @property(readonly, copy, nonatomic) NSNumber *latitude; // @synthesize latitude=_latitude;
 @property(copy, nonatomic) NSDate *recordedAt; // @synthesize recordedAt=_recordedAt;
 @property(copy, nonatomic) NSString *identifier; // @synthesize identifier=_identifier;
-- (void).cxx_destruct;
 
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;

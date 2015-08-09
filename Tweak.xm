@@ -3,11 +3,9 @@
 //#import <Spex/Spex.h>
 #include "NSTask.h"
 #include "BMFeedViewController.h"
-#include "TSInfo.h"
 #import "Headers.h"
-/*
 
-*/
+
 /*
 %hook BMFeedViewController
 
@@ -163,7 +161,7 @@ static NSArray *bmp_arrayOfURLSInDescendingQualityFromURL(NSURL *masterURL){
     M3U8ExtXStreamInfList *streamList = masterPlaylist.xStreamList;
     [streamList sortByBandwidthInOrder:NSOrderedDescending];
     NSURL *streamURL;
-    streamURL = [[streamList extXStreamInfAtIndex:videoQuality] m3u8URL];
+    streamURL = [[streamList extXStreamInfAtIndex:videoQuality] m3u8URL]; //Sets the video quality!
     M3U8MediaPlaylist *playList = [[M3U8MediaPlaylist alloc] initWithContentOfURL:streamURL error:nil];
     M3U8SegmentInfoList *segments = [playList segmentList];
 
