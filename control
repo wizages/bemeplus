@@ -1,6 +1,6 @@
 Package: com.wizage.bemeplus
 Name: Beme++
-Depends: mobilesubstrate com.nin9tyfour.ffmpeg
+Depends: mobilesubstrate, com.nin9tyfour.ffmpeg
 Version: 0.0.1
 Architecture: iphoneos-arm
 Description: Fucking with beme
