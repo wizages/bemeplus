@@ -16,7 +16,7 @@ ADDITIONAL_OBJCFLAGS += -fobjc-arc -I./extras/include
 TWEAK_NAME = Beme
 Beme_FILES = Tweak.xm upload.xm BMPAlertHandler.m
 Beme_FRAMEWORKS = UIKit AVFoundation Foundation CoreGraphics
-Beme_LIBRARIES = M3U8
+Beme_LIBRARIES = M3U8 MBProgressHUD
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
