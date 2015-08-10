@@ -264,32 +264,17 @@ static BOOL ffmpeg_installed(void){
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
 {
     NSLog(@"Start converting.");
-    NSLog(@"Start generating task");
-    NSLog(@"fileNames: %@", fileNames);
     NSString *filesConcat = [fileNames componentsJoinedByString: @"|"];
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
     NSTask *task = [[NSTask alloc] init];
 
-    NSPipe * out = [NSPipe pipe];
-    [task setStandardOutput:out];
-
     NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"concat:%@", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
-    NSLog(@"Arguments : %@ \n basePath : %@", arguments, basePath);
-
-    if (ffmpeg_installed() == NO)
-    {
-        return;
-    }
 
     [task setLaunchPath: ffmpegPath];
     [task setCurrentDirectoryPath: basePath];
     [task setArguments: arguments];
     [task launch];
 
-    NSFileHandle * read = [out fileHandleForReading];
-    NSData * dataRead = [read readDataToEndOfFile];
-    NSString * stringRead = [[NSString alloc] initWithData:dataRead encoding:NSUTF8StringEncoding];
-    NSLog(@"output: %@", stringRead);
     NSLog(@"Done");
 }
 
@@ -318,10 +303,7 @@ static UIToolbar *toolBar;
 
 %new
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    // UIToolBar and it's buttons are subclasses of UIControl
-    NSLog(@"TOUCH! %@", touch.view);
     if ([touch.view isDescendantOfView:toolBar]) {
-        NSLog(@"IS A DESCENDANT!");
         return NO;
     }
     return YES;
