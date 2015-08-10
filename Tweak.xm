@@ -264,18 +264,46 @@ static BOOL ffmpeg_installed(void){
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
 {
     NSLog(@"Start converting.");
-    NSString *filesConcat = [fileNames componentsJoinedByString: @"|"];
+    static NSString *outputName = @"converted.mov";
+
     NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent: directoryForStack(stack)];
+    NSString *filesConcat = [fileNames componentsJoinedByString: @"|"];
+    NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"concat:%@", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"-max_alloc", @"50000000", outputName, @"-n", nil];
+
+    NSPipe *error = [NSPipe pipe];
+    NSFileHandle *errorFileHandle = [error fileHandleForReading];
+
     NSTask *task = [[NSTask alloc] init];
-
-    NSArray *arguments = [[NSArray alloc] initWithObjects:@"-i", [NSString stringWithFormat:@"concat:%@", filesConcat] , @"-acodec", @"copy", @"-vcodec", @"copy", @"name.mov", nil];
-
     [task setLaunchPath: ffmpegPath];
     [task setCurrentDirectoryPath: basePath];
     [task setArguments: arguments];
+    [task setStandardError:error];
+
     [task launch];
+    [task waitUntilExit];
+
+    NSData *errorOutput = [errorFileHandle readDataToEndOfFile];
+    NSString *errorStringOutput = [[NSString alloc] initWithData:errorOutput encoding:NSUTF8StringEncoding];
+    NSLog(@"Output: %@", errorStringOutput);
+
+    if ([errorStringOutput rangeOfString:@"Cannot allocate memory"].location != NSNotFound)
+    {
+        NSLog(@"Not enough memory allocated to convert. TODO: Prompt user to adjust memory allocation settings, or adjust for this case and retry command.");
+    }
 
     NSLog(@"Done");
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *outputPath = [basePath stringByAppendingPathComponent:outputName];
+    if ([fileManager fileExistsAtPath:outputPath  isDirectory:NULL])
+    {
+        if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum (outputPath))
+        {
+           UISaveVideoAtPathToSavedPhotosAlbum (outputPath, [BMPAlertHandler sharedInstance], @selector(video:didFinishSavingWithError:contextInfo:), nil);
+        }
+    }else{
+        NSLog(@"The file does not exist :/");
+    }
 }
 
 /**

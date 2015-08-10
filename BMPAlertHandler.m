@@ -17,8 +17,7 @@
 	return sharedInstance;
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
      
     if([title isEqualToString:@"Cancel"] || [title isEqualToString:@"OK"])
@@ -28,6 +27,17 @@
     {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"cydia://package/com.nin9tyfour.ffmpeg"]];
     }
+}
+
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo{
+	if (error != nil) 
+	{
+		NSLog(@"Image Can not be saved");
+	} 
+	else 
+	{
+		NSLog(@"Successfully saved Image");
+	}
 }
 
 @end
