@@ -9,6 +9,8 @@
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack);
 static BOOL ffmpeg_installed(void);
 
+static NSOperationQueue *downloadQueue;
+
 
 /*
 %hook BMFeedViewController
@@ -198,7 +200,7 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
     NSMutableArray *savedPaths = [NSMutableArray array];
 
     NSMutableArray *mutableOperations = [NSMutableArray array];
-
+    [sharedAlertController prepareForProgress];
     for (NSURL* currentURL in urlArray)
     {
         NSURLRequest *request = [NSURLRequest requestWithURL:currentURL];
@@ -209,13 +211,15 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSString *filename = [operation.response suggestedFilename];
             NSString *savePath = [basePath stringByAppendingPathComponent:filename];
-            // NSLog(@"Savepath: %@", savePath);
             [responseObject writeToFile:savePath  atomically:YES];
-            // NSLog(@"Downloaded: %@", filename);
             [savedPaths addObject:filename];
             [weakOperation setSavePath:savePath];
             [weakOperation setIndex:@(index)];
             countFiles++;
+            [sharedAlertController setHUDMessage:[NSString stringWithFormat:@"%li/%li", (long)countFiles, (long)[urlArray count]]];
+            float progress = (float)countFiles/(float)[urlArray count];
+            NSLog(@"PROGRESS: %f", progress);
+            [sharedAlertController setHUDProgress:progress];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];
@@ -232,12 +236,15 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
             [savePaths addObject:op.savePath.lastPathComponent];
             // NSLog(@"%@\t\t%li", op.savePath, (long int)[[op index] intValue]);
         }
+        [sharedAlertController prepareForIndeterminate];
+        [sharedAlertController setHUDTitle:@"Saving"];
+        [sharedAlertController setHUDMessage:@"Remuxing"];
         bmp_convertVideoAtPath(savePaths, stack);
     }];
 
-    NSOperationQueue *downloadQueue = [[NSOperationQueue alloc] init];
+    downloadQueue = [[NSOperationQueue alloc] init];
     downloadQueue.name = @"Download Queue";
-    downloadQueue.maxConcurrentOperationCount = 4;
+    downloadQueue.maxConcurrentOperationCount = 3;
     [downloadQueue addOperations:operations waitUntilFinished:NO];
 }
 
@@ -292,6 +299,7 @@ static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
     }
 
     NSLog(@"Done");
+    [sharedAlertController setHUDMessage:@"Importing"];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *outputPath = [basePath stringByAppendingPathComponent:outputName];
@@ -342,9 +350,9 @@ static UIToolbar *toolBar;
     toolBar = [[UIToolbar alloc] initWithFrame:CGRectZero];
     toolBar.translatesAutoresizingMaskIntoConstraints = NO;
 
-    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_saveTapped)];
+    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_saveTapped:)];
     UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    UIBarButtonItem *button2=[[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_closeTapped)];
+    UIBarButtonItem *button2=[[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_closeTapped:)];
 
     [toolBar setItems:@[saveButton, flex, button2]];
     [self.view addSubview:toolBar];
@@ -390,15 +398,19 @@ static UIToolbar *toolBar;
 }
 
 %new
-- (void)bmp_closeTapped{
+- (void)bmp_closeTapped:(UIBarButtonItem *)button{
+    [downloadQueue cancelAllOperations];
     shouldEndPlayback = YES;
     [self onNoLongerTouching];
 }
 
 %new
-- (void)bmp_saveTapped{
+- (void)bmp_saveTapped:(UIBarButtonItem *)button{
     NSArray *urlArray = bmp_arrayOfURLSInDescendingQualityFromURL(self.bmp_currentURL);
-    saveFilesWithStack(urlArray, self.stack);
+    [sharedAlertController createProgressHUDInView:self.view title:@"Downloading" message:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        saveFilesWithStack(urlArray, self.stack);
+    });
 }
 
 - (void)onNoLongerTouching{

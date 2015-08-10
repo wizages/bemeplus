@@ -14,9 +14,9 @@ Beme_LDFLAGS += -L./extras/lib
 ADDITIONAL_OBJCFLAGS += -fobjc-arc -I./extras/include
 
 TWEAK_NAME = Beme
-Beme_FILES = Tweak.xm upload.xm BMPAlertHandler.m
+Beme_FILES = Tweak.xm upload.xm BMPAlertHandler.m BMPJGProgressHUDCompletionIndicatorView.m
 Beme_FRAMEWORKS = UIKit AVFoundation Foundation CoreGraphics
-Beme_LIBRARIES = M3U8 MBProgressHUD
+Beme_LIBRARIES = M3U8 JGProgressHUD
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 

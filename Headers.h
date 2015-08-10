@@ -4,7 +4,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <M3U8/M3U8.h>
 #import "LoggingMacros.h"
-#import <MBProgressHUD/MBProgressHUD.h>
+#import <JGProgressHUD/JGProgressHUD.h>
 
 
 typedef enum {high, medium, low} Quality;
