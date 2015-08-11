@@ -5,6 +5,7 @@
 #include "BMFeedViewController.h"
 #import "Headers.h"
 #import "BMPAlertHandler.h"
+#import "BMPResourceManager.h"
 
 static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack);
 static BOOL ffmpeg_installed(void);
@@ -216,10 +217,6 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
             [weakOperation setSavePath:savePath];
             [weakOperation setIndex:@(index)];
             countFiles++;
-            [sharedAlertController setHUDMessage:[NSString stringWithFormat:@"%li/%li", (long)countFiles, (long)[urlArray count]]];
-            float progress = (float)countFiles/(float)[urlArray count];
-            NSLog(@"PROGRESS: %f", progress);
-            [sharedAlertController setHUDProgress:progress];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];
@@ -228,7 +225,11 @@ static void saveFilesWithStack(NSArray *urlArray, BMStackModel *stack){
     }
 
     NSArray *operations = [%c(AFURLConnectionOperation) batchOfRequestOperations:mutableOperations progressBlock:^(NSUInteger numberOfFinishedOperations, NSUInteger totalNumberOfOperations) {
-        NSLog(@"%lu of %lu complete", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
+        // NSLog(@"%lu of %lu complete", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
+
+        [sharedAlertController setHUDMessage:[NSString stringWithFormat:@"%li/%li", (long)numberOfFinishedOperations, (long)totalNumberOfOperations]];
+        float progress = (float)numberOfFinishedOperations/(float)totalNumberOfOperations;
+        [sharedAlertController setHUDProgress:progress];
     } completionBlock:^(NSArray *operations) {
         NSLog(@"All downloads are complete.");
         NSMutableArray *savePaths = [NSMutableArray array];
@@ -321,7 +322,7 @@ static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
  * - nin9tyfour
  */
 static BOOL shouldEndPlayback;
-static UIToolbar *toolBar;
+static UIToolbar *nowPlayingOverlayToolbar;
 
 
 - (void)viewDidLoad{
@@ -339,7 +340,7 @@ static UIToolbar *toolBar;
 
 %new
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if ([touch.view isDescendantOfView:toolBar]) {
+    if ([touch.view isDescendantOfView:nowPlayingOverlayToolbar]) {
         return NO;
     }
     return YES;
@@ -347,20 +348,20 @@ static UIToolbar *toolBar;
 
 %new
 - (void)bmp_setupOverlayControls{
-    toolBar = [[UIToolbar alloc] initWithFrame:CGRectZero];
-    toolBar.translatesAutoresizingMaskIntoConstraints = NO;
+    nowPlayingOverlayToolbar = [[UIToolbar alloc] initWithFrame:CGRectZero];
+    nowPlayingOverlayToolbar.translatesAutoresizingMaskIntoConstraints = NO;
 
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_saveTapped:)];
     UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *button2=[[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_closeTapped:)];
 
-    [toolBar setItems:@[saveButton, flex, button2]];
-    [self.view addSubview:toolBar];
+    [nowPlayingOverlayToolbar setItems:@[saveButton, flex, button2]];
+    [self.view addSubview:nowPlayingOverlayToolbar];
 
-    NSDictionary *dict = NSDictionaryOfVariableBindings(toolBar);
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:[toolBar]|" options:0 metrics:nil views:dict]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[toolBar]|" options:0 metrics:nil views:dict]];
-    toolBar.alpha = 0;
+    NSDictionary *dict = NSDictionaryOfVariableBindings(nowPlayingOverlayToolbar);
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:[nowPlayingOverlayToolbar]|" options:0 metrics:nil views:dict]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[nowPlayingOverlayToolbar]|" options:0 metrics:nil views:dict]];
+    nowPlayingOverlayToolbar.alpha = 0;
 }
 
 /**
@@ -371,7 +372,7 @@ static UIToolbar *toolBar;
 %new
 - (void)bmp_toggleOverlayControls{
     [UIView animateWithDuration:0.3 animations:^{
-        toolBar.alpha = toolBar.alpha ? 0.0f : 1.0f;
+        nowPlayingOverlayToolbar.alpha = nowPlayingOverlayToolbar.alpha ? 0.0f : 1.0f;
     } completion:nil];
 }
 
@@ -513,6 +514,77 @@ static BOOL version_supported(void){
 
 %end
 
+%hook BMFeedViewController
+
+%new
+- (void)bmp_createNewUpload:(UIBarButtonItem *)buttonItem{
+    [BMPAlertHandler showAlertWithTitle:@"Information" message:@"Not implemented yet!"];
+}
+
+%new
+- (void)bmp_openSavedVault:(UIBarButtonItem *)buttonItem{
+    [BMPAlertHandler showAlertWithTitle:@"Information" message:@"Not implemented yet!"];
+}
+
+%new
+- (void)bmp_setupToolbar{
+    UIToolbar *toolbar = self.navigationController.toolbar;
+
+    /**
+     * This is a private method, but it prevents touches in the toolbar from going through to the cells below it.
+     *
+     * Reason: perhaps there is a gesture window that is present that is intercepting touches and applying them to the
+     * cell at the touch location, maybe?
+     *
+     * - nin9tyfour
+     */
+    toolbar.deliversTouchesForGesturesToSuperview = NO;
+
+    self.navigationController.toolbarHidden = NO;
+    UIEdgeInsets insets = self.tableView.contentInset;
+    insets.bottom += toolbar.frame.size.height;
+    self.tableView.contentInset = insets;
+    toolbar.tintColor = [UIColor beme_greenColor];
+
+    if (toolbar.items)
+    {
+        return;
+    }
+
+    toolbar.barTintColor = [UIColor colorWithRed:0.12 green:0.12 blue:0.12 alpha:1];
+    toolbar.backgroundColor = toolbar.barTintColor;
+    toolbar.translucent = NO;
+
+    UIBarButtonItem *uploadButton = [[UIBarButtonItem alloc] initWithImage:[BMPResourceManager resourceImageNamed:@"Upload"] style:UIBarButtonItemStylePlain target:self action:@selector(bmp_createNewUpload:)];
+    UIBarButtonItem *vaultButton = [[UIBarButtonItem alloc] initWithImage:[BMPResourceManager resourceImageNamed:@"Vault"] style:UIBarButtonItemStylePlain target:self action:@selector(bmp_openSavedVault:)];
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+
+    toolbar.items = @[vaultButton, flex, uploadButton];
+}
+
+%new
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if ([touch.view isDescendantOfView:nowPlayingOverlayToolbar]) {
+        return NO;
+    }
+    return NO;
+}
+
+%group TB_ViewDidAppear
+- (void)viewDidAppear:(BOOL)animated{
+    %orig;
+    [self bmp_setupToolbar];
+}
+%end
+%group TB_NewViewDidAppear
+%new
+- (void)viewDidAppear:(BOOL)animated{
+    [self bmp_setupToolbar];
+}
+%end
+
+%end
+
 %ctor{
     if (version_supported() == NO)
     {
@@ -520,5 +592,11 @@ static BOOL version_supported(void){
     }else{
         %init();
         %init(TapToOpen);
+        if ([%c(BMFeedViewController) instancesRespondToSelector:@selector(viewDidAppear:)])
+        {
+            %init(TB_ViewDidAppear)
+        }else{
+            %init(TB_NewViewDidAppear);
+        }
     }
 }

@@ -5,6 +5,7 @@
 #import <M3U8/M3U8.h>
 #import "LoggingMacros.h"
 #import <JGProgressHUD/JGProgressHUD.h>
+#import "BMPResourceManager.h"
 
 
 typedef enum {high, medium, low} Quality;
@@ -57,4 +58,30 @@ typedef enum {high, medium, low} Quality;
 @property (nonatomic, strong) NSNumber *index;
 - (NSString *)savePath;
 - (void)setSavePath:(NSString *)value;
+@end
+
+@interface UIColor (BeMe)
++ (id)beme_greenColor;
++ (id)beme_blueColor;
++ (id)beme_dark_redColor;
++ (id)beme_redColor;
++ (id)beme_progressColor;
++ (id)beme_darkGray;
++ (id)beme_lightGray;
++ (id)beme_darkerBackgroundColor;
++ (id)beme_RGB929292Color;
++ (id)beme_RGB70greycolor;
++ (id)beme_RGB878787Color;
++ (id)beme_RGB646464Color;
++ (id)beme_RGB454545Color;
++ (id)beme_RGB10GreyColor;
++ (id)beme_RGB363636Color;
++ (id)beme_RGB222222Color;
++ (id)beme_RGB202020Color;
++ (id)beme_darkBackgroundColor;
++ (id)beme_backgroundColor;
+@end
+
+@interface UIView (BMP_Private)
+@property (assign,nonatomic) BOOL deliversTouchesForGesturesToSuperview;
 @end

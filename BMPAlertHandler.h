@@ -7,6 +7,8 @@ typedef enum{
 #define sharedAlertController [BMPAlertHandler sharedInstance]
 + (instancetype)sharedInstance;
 
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
+
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
 
 - (void)createProgressHUDInView:(UIView *)view title:(NSString *)title message:(NSString *)message;

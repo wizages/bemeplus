@@ -45,6 +45,8 @@
 	{
 		[self showHUDCompletionWithFailure];
 	}
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	[fileManager removeItemAtPath:[videoPath stringByDeletingLastPathComponent] error:NULL];
 	[self hideHUD];
 }
 
@@ -104,6 +106,15 @@
 - (void)showHUDCompletionWithFailure{
 	_progressHUD.indicatorView = [[BMPJGProgressHUDCompletionIndicatorView alloc] initWithType:BMPCompletionTypeFailure];
 	[self setHUDTitle:@"Failed"];
+}
+
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: title
+        message: message
+        delegate: nil
+        cancelButtonTitle:@"OK"
+        otherButtonTitles:nil];
+    [alert show];
 }
 
 @end

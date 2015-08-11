@@ -1,4 +1,5 @@
 #import "BMPJGProgressHUDCompletionIndicatorView.h"
+#import "BMPResourceManager.h"
 
 @implementation BMPJGProgressHUDCompletionIndicatorView
 
@@ -13,11 +14,9 @@
 }
 
 - (instancetype)initWithContentView:(UIView *__unused)contentView type:(BMPCompletionType)type{
-    NSBundle *resourceBundle = [NSBundle bundleWithPath:@"/Library/Application Support/BemePlus/BemePlus.bundle"];
+    UIImage *image = [BMPResourceManager resourceImageNamed:[self resourceNameFromType:type]];
     
-    NSString *imgPath = [resourceBundle pathForResource:[self resourceNameFromType:type] ofType:@"png"];
-    
-    self = [super initWithImage:[UIImage imageWithContentsOfFile:imgPath]];
+    self = [super initWithImage:image];
     
     return self;
 }
