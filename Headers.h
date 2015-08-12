@@ -8,7 +8,31 @@
 #import "BMPResourceManager.h"
 
 
+
 typedef enum {high, medium, low} Quality;
+
+@interface BMClip : NSObject
+@property(copy, nonatomic) NSURL *remoteURL; // @synthesize remoteURL=_remoteURL;
+@property(copy, nonatomic) NSString *localIdentifier; // @synthesize localIdentifier=_localIdentifier;
+@property(copy, nonatomic) NSString *localFilename; // @synthesize localFilename=_localFilename;
+@property(copy, nonatomic) NSNumber *userIdentifier; // @synthesize userIdentifier=_userIdentifier;
+@property(copy, nonatomic) NSDate *uploadURLExpirey; // @synthesize uploadURLExpirey=_uploadURLExpirey;
+@property(copy, nonatomic) NSString *uploadURL; // @synthesize uploadURL=_uploadURL;
+@property(copy, nonatomic) NSString *uploadToken; // @synthesize uploadToken=_uploadToken;
+@property(nonatomic) unsigned long long state; // @synthesize state=_state;
+@property(copy, nonatomic) NSDate *postedAt; // @synthesize postedAt=_postedAt;
+@property(readonly, copy, nonatomic) NSNumber *longitude; // @synthesize longitude=_longitude;
+@property(readonly, copy, nonatomic) NSNumber *latitude; // @synthesize latitude=_latitude;
+@property(copy, nonatomic) NSDate *recordedAt; // @synthesize recordedAt=_recordedAt;
+@property(copy, nonatomic) NSString *identifier; // @synthesize identifier=_identifier;
+@end
+
+@interface BMDockManager : NSObject
++ (int)publishClip2:(BMClip *)arg1;
+- (int)publishClip:(BMClip *)arg1;
+- (void)activate;
+@end
+
 @class BMStackModel;
 
 @interface BMPlayerViewController : UIViewController <UIGestureRecognizerDelegate>

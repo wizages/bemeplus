@@ -1,4 +1,4 @@
-@interface BMFeedViewController : UIViewController
+@interface BMFeedViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (retain, nonatomic) UITableView *tableView;
 
 - (id)currentPlayingStack;

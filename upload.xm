@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
-#import "Headers/BMClip.h"
+//#import "Headers/BMClip.h"
 #import "Headers/BMCurrentUserInfoViewController.h"
 #import "Headers.h"
 /*
@@ -10,13 +10,10 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 %hook BMDockManager
 
 - (int)publishClip:(BMClip *)arg1 {
-    %log;
-    BMClip *test = arg1;
-    test.localFilename=@"../test.mov";
-    arg1 = test;
-    int r = %orig; 
-    HBLogDebug(@" = %d", r); 
-    return r; 
+   %log;
+   HBLogDebug(@"%@", arg1);
+   %orig;
+   return %orig;
 }
 
 %end
@@ -62,10 +59,32 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 		otherButtonTitles:nil];
 	[alert show];
 }
-
+/*
+<BMClip: 0x192d5ff0> {
+	    identifier = "<null>";
+	    latitude = "40.00284424154221";
+	    localFilename = "../test.mov";
+	    localIdentifier = "C15F62FC-40C5-4816-AF3C-AB19B7CCC929-6786-0000024FA1980987";
+	    longitude = "-105.0982369811759";
+	    postedAt = "<null>";
+	    recordedAt = "2015-08-10 00:30:01 +0000";
+	    remoteURL = "<null>";
+	    state = 0;
+	    uploadToken = "<null>";
+	    uploadURL = "<null>";
+	    uploadURLExpirey = "<null>";
+	    userIdentifier = 229359;
+	}}
+*/
 %new
 -(void) upload {
-
+	UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+       imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+       //imagePickerController.delegate = self;
+       imagePickerController.allowsEditing = YES; //if you want to edit the image
+       //self.RootViewController = imagePickerController;
+       self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
+       [self.view addSubview:imagePickerController.view];
 }
 
 %end

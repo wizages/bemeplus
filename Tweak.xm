@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <MobileCoreServices/UTCoreTypes.h>
 //#import <Spex/Spex.h>
 #include "NSTask.h"
 #include "BMFeedViewController.h"
@@ -518,7 +519,38 @@ static BOOL version_supported(void){
 
 %new
 - (void)bmp_createNewUpload:(UIBarButtonItem *)buttonItem{
-    [BMPAlertHandler showAlertWithTitle:@"Information" message:@"Not implemented yet!"];
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+       imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+       imagePickerController.mediaTypes = [NSArray arrayWithObjects:@"public.movie", nil];
+       imagePickerController.delegate = self;
+       imagePickerController.allowsEditing = YES; //if you want to edit the image
+       //self.RootViewController = imagePickerController;
+       //self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
+       [self presentViewController:imagePickerController animated:YES completion:nil];
+    //[BMPAlertHandler showAlertWithTitle:@"Information" message:@"Not implemented yet!"];
+}
+
+%new
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [picker dismissViewControllerAnimated:YES completion: NULL];
+    NSURL *videoURL = [info objectForKey:UIImagePickerControllerMediaURL];
+    //Generating upload blob
+    BMClip *videoUpload = [[%c(BMClip) alloc] init];
+    BMDockManager *dock = [[%c(BMDockManager) alloc] init];
+    [dock activate];
+    int userId = 229359; //Place your user ID here
+    
+    //videoUpload.latitude = @"40.00284424154221";
+    //videoUpload.longitude = @"-105.0982369811759";
+    videoUpload.userIdentifier = [NSNumber numberWithInt:x];
+    videoUpload.recordedAt = [[NSDate alloc] init];
+    videoUpload.localIdentifier = @"C15F62FC-40C5-4816-AF3C-AB19B7CCC929-6786-0000024FA1980987";
+    videoUpload.localFilename = [NSString stringWithFormat:@"../../../tmp/%@", [videoURL lastPathComponent]];
+    [dock publishClip:videoUpload];
+}
+%new
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
+    [picker dismissViewControllerAnimated:YES completion: NULL];
 }
 
 %new
