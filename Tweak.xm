@@ -12,6 +12,17 @@ static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack);
 static BOOL ffmpeg_installed(void);
 
 static NSOperationQueue *downloadQueue;
+static NSNumber *userID;
+
+%hook BMFeedViewController
+
+-(BMStackModel *) currentPlayingStack {
+    HBLogDebug(@"Stack: %@", %orig);
+    %orig;
+    return %orig;
+}
+
+%end
 
 
 /*
@@ -326,12 +337,15 @@ static BOOL shouldEndPlayback;
 static UIToolbar *nowPlayingOverlayToolbar;
 
 
+
 - (void)viewDidLoad{
     %orig;
     shouldEndPlayback = NO;
     videoQuality = high;
     [self bmp_setupOverlayControls];
 
+    BMCurrentUser *user = [[%c(BMCurrentUser) alloc] init];
+    userID = user.identifier;
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bmp_tapped)];
     tapRecognizer.numberOfTapsRequired = 1;
@@ -538,13 +552,12 @@ static BOOL version_supported(void){
     BMClip *videoUpload = [[%c(BMClip) alloc] init];
     BMDockManager *dock = [[%c(BMDockManager) alloc] init];
     [dock activate];
-    int userId = 229359; //Place your user ID here
     
     //videoUpload.latitude = @"40.00284424154221";
     //videoUpload.longitude = @"-105.0982369811759";
-    videoUpload.userIdentifier = [NSNumber numberWithInt:x];
+    videoUpload.userIdentifier = [NSNumber numberWithInt:userId];
     videoUpload.recordedAt = [[NSDate alloc] init];
-    videoUpload.localIdentifier = @"C15F62FC-40C5-4816-AF3C-AB19B7CCC929-6786-0000024FA1980987";
+    videoUpload.localIdentifier = @"255A9C92-9877-426A-9B16-E814585F5DC8-1878-00000116494055B8";
     videoUpload.localFilename = [NSString stringWithFormat:@"../../../tmp/%@", [videoURL lastPathComponent]];
     [dock publishClip:videoUpload];
 }

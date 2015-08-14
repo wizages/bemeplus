@@ -27,8 +27,13 @@ typedef enum {high, medium, low} Quality;
 @property(copy, nonatomic) NSString *identifier; // @synthesize identifier=_identifier;
 @end
 
+
+@interface BMCurrentUser : NSObject
+@property(copy, nonatomic) NSNumber *identifier;
+- (id)init;
+@end
+
 @interface BMDockManager : NSObject
-+ (int)publishClip2:(BMClip *)arg1;
 - (int)publishClip:(BMClip *)arg1;
 - (void)activate;
 @end
