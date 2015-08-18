@@ -14,137 +14,6 @@ static BOOL ffmpeg_installed(void);
 static NSOperationQueue *downloadQueue;
 static NSNumber *userID;
 
-%hook BMFeedViewController
-
--(BMStackModel *) currentPlayingStack {
-    HBLogDebug(@"Stack: %@", %orig);
-    %orig;
-    return %orig;
-}
-
-%end
-
-
-/*
-%hook BMFeedViewController
-
--(BMStackModel *) currentPlayingStack {
-    NSArray *m3u8Data; //contents of m3u8
-    NSMutableArray *tsArray;
-    NSData *urlData; //actual data of m3u8 file or ts file
-    int count; //count for the for loop
-    //NSString *directoryUrl; //file location url
-    NSString *downloadUrlString; //m3u8 download url string
-    NSString *tsDownloadUrlString; //ts download url string
-    NSURL *downloadUrl; //m3u8 download url
-    BMUserModel *userInfo;
-    TSInfo *tsInfo;
-    %orig;
-
-    /*
-    Initialize variables;
-    
-    tsArray = [[NSMutableArray alloc] init];
-    downloadUrl = %orig.streamURL;
-    userInfo = %orig.user;
-    downloadUrlString = [downloadUrl absoluteString];
-    videoQuality = high;
-
-    /*
-    Here we changed the letter from A-C depending on what quality type we want. A being lowest and C being highest
-    
-    if (videoQuality == high){
-        downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"C"]; 
-    }
-    else if (videoQuality == medium){
-        downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"B"]; 
-    }
-    else {
-        downloadUrlString = [downloadUrlString stringByReplacingOccurrencesOfString:@"master" withString:@"A"]; 
-    }
-
-    //HBLogDebug(@"%@", downloadUrlString);
-    downloadUrl = [NSURL URLWithString:downloadUrlString];
-    urlData = [NSData dataWithContentsOfURL:downloadUrl];
-
-    if (urlData)
-    {
-        m3u8Data = [[[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding] componentsSeparatedByString:@"\n"];
-
-        HBLogDebug(@"Testing shit, : %@", m3u8Data);
-        for (count = 6; count < [m3u8Data count]; count = count + 2)
-        {
-            tsDownloadUrlString = [m3u8Data objectAtIndex:count];
-            tsInfo = [[TSInfo alloc] initWithURL:tsDownloadUrlString];
-            tsInfo.fileName = [NSString stringWithFormat:@"%@_%ld%ld",userInfo.displayName, (long)%orig.identifier, (long)[tsArray count]];
-            tsInfo.shouldDownload = YES; // This will allows us to select which videos to download.
-            [tsArray addObject:tsInfo];
-            HBLogDebug(@"tsInfo contains: %@, %d, %@", tsInfo.fileName, tsInfo.shouldDownload, tsInfo.tsURL);
-        }
-
-        /*
-        * Created this array so that you can make the display UI here.
-        * and then populate saying chose which videos from the count
-        * of the size of the tsArray size. And then if they say yes
-        * or no you would set the tsInfo.shouldDownload flag.
-        
-        HBLogDebug(@"tsArray contains: %@", tsArray);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSUInteger count;
-            TSInfo *tsInfo;
-            NSData *urlData;
-            NSString *directoryUrl;
-            HBLogDebug(@"Array count: %ld", (long) [tsArray count]);
-        for (count = 0; count < [tsArray count]; count++)
-        {
-            tsInfo = [tsArray objectAtIndex:count];
-            if ( tsInfo.shouldDownload )
-            {
-                urlData = [NSData dataWithContentsOfURL:tsInfo.tsURL];
-                if (urlData)
-                {
-                    HBLogDebug(@"Testing shit");
-                    directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.ts", tsInfo.fileName]];
-                    //[urlData writeToFile:directoryUrl atomically:YES];
-                    //[self convertVideo:tsInfo.fileName];
-                    //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL]; //Clean up the .ts file you dont need it no more
-                }
-            }
-        }
-        });
-    }
-    return %orig;
-}
-
-/*
-* This is a new fuction that will convert the video from .ts to .mov
-
-
-%new(v@:?)
--(void)convertVideo: (NSString *) fileName{
-    convertVideoAtPath(fileName);
-    [self importToPhotoAlbum:fileName];
-}
-
-/*
-* This is a new fuction that will import the new .mov video to
-* the photo album and then delete the tmp file. Later we can
-* also create a phantom like vault.
-
-%new(v@:?)
--(void) importToPhotoAlbum: (NSString *) fileName
-{
-    //NSString *directoryUrl;
-    UISaveVideoAtPathToSavedPhotosAlbum([NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mov", fileName]], nil, nil, nil);
-    //directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.ts", fileName]];
-    //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL];
-    //directoryUrl = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.mov", fileName]];
-    //[[NSFileManager defaultManager] removeItemAtPath:directoryUrl error:NULL];
-}
-
-%end
-*/
-
 %subclass BMPHTTPRequestOperation : AFHTTPRequestOperation
 
 %new
@@ -344,9 +213,6 @@ static UIToolbar *nowPlayingOverlayToolbar;
     videoQuality = high;
     [self bmp_setupOverlayControls];
 
-    BMCurrentUser *user = [[%c(BMCurrentUser) alloc] init];
-    userID = user.identifier;
-
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bmp_tapped)];
     tapRecognizer.numberOfTapsRequired = 1;
     tapRecognizer.delegate = self;
@@ -538,10 +404,7 @@ static BOOL version_supported(void){
        imagePickerController.mediaTypes = [NSArray arrayWithObjects:@"public.movie", nil];
        imagePickerController.delegate = self;
        imagePickerController.allowsEditing = YES; //if you want to edit the image
-       //self.RootViewController = imagePickerController;
-       //self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
        [self presentViewController:imagePickerController animated:YES completion:nil];
-    //[BMPAlertHandler showAlertWithTitle:@"Information" message:@"Not implemented yet!"];
 }
 
 %new
@@ -552,12 +415,8 @@ static BOOL version_supported(void){
     BMClip *videoUpload = [[%c(BMClip) alloc] init];
     BMDockManager *dock = [[%c(BMDockManager) alloc] init];
     [dock activate];
-    
-    //videoUpload.latitude = @"40.00284424154221";
-    //videoUpload.longitude = @"-105.0982369811759";
-    videoUpload.userIdentifier = [NSNumber numberWithInt:userId];
+    videoUpload.userIdentifier = userID;
     videoUpload.recordedAt = [[NSDate alloc] init];
-    videoUpload.localIdentifier = @"255A9C92-9877-426A-9B16-E814585F5DC8-1878-00000116494055B8";
     videoUpload.localFilename = [NSString stringWithFormat:@"../../../tmp/%@", [videoURL lastPathComponent]];
     [dock publishClip:videoUpload];
 }
@@ -617,6 +476,10 @@ static BOOL version_supported(void){
 
 %group TB_ViewDidAppear
 - (void)viewDidAppear:(BOOL)animated{
+    //First things first get the users id.
+    BMCurrentUser *user = [[%c(BMCurrentUser) alloc] init];
+    userID = user.identifier;
+
     %orig;
     [self bmp_setupToolbar];
 }
