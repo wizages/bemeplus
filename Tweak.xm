@@ -287,6 +287,11 @@ static UIToolbar *nowPlayingOverlayToolbar;
 }
 
 %new
+-(void)bmp_returnTapped:(UIBarButtonItem *)button{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+%new
 - (void)bmp_saveTapped:(UIBarButtonItem *)button{
     NSArray *urlArray = bmp_arrayOfURLSInDescendingQualityFromURL(self.bmp_currentURL);
     [sharedAlertController createProgressHUDInView:self.view title:@"Downloading" message:nil];
@@ -344,9 +349,10 @@ static UIToolbar *nowPlayingOverlayToolbar;
 
 %new
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    BMFeedCell *cell = (BMFeedCell *)[tableView cellForRowAtIndexPath:indexPath];
+    //BMFeedCell *cell = (BMFeedCell *)[tableView cellForRowAtIndexPath:indexPath];
     [self playVideoFromCellAtIndexPath:indexPath];
-    [cell setHighlighted:YES animated:false];
+    //[cell setHighlighted:YES animated:false];
+    //Causes issues when the using the return fuction
 }
 
 %end

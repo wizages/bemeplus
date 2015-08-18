@@ -53,6 +53,7 @@ typedef enum {high, medium, low} Quality;
 - (NSArray *)bmp_arrayOfURLSInDescendingQualityFromURL:(NSURL *)masterURL;
 - (void)bmp_setupOverlayControls;
 - (NSURL *)bmp_currentURL;
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion;
 @end
 
 @interface BMNetworkClient : NSObject
