@@ -204,7 +204,10 @@ static void bmp_convertVideoAtPath(NSArray *fileNames, BMStackModel *stack)
  */
 static BOOL shouldEndPlayback;
 static UIToolbar *nowPlayingOverlayToolbar;
-
+static UIButton *watched;
+static UIButton *download;
+static UIButton *return_button;
+static BOOL hidden_bar;
 
 
 - (void)viewDidLoad{
@@ -234,15 +237,41 @@ static UIToolbar *nowPlayingOverlayToolbar;
 
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_saveTapped:)];
     UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    UIBarButtonItem *button2=[[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(bmp_closeTapped:)];
+    UIBarButtonItem *button2=[[UIBarButtonItem alloc] initWithImage:[BMPResourceManager resourceImageNamed:@"Watched"] style:UIBarButtonItemStylePlain target:self action:@selector(bmp_closeTapped:)];
 
     [nowPlayingOverlayToolbar setItems:@[saveButton, flex, button2]];
-    [self.view addSubview:nowPlayingOverlayToolbar];
+    //[self.view addSubview:nowPlayingOverlayToolbar];
 
-    NSDictionary *dict = NSDictionaryOfVariableBindings(nowPlayingOverlayToolbar);
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:[nowPlayingOverlayToolbar]|" options:0 metrics:nil views:dict]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[nowPlayingOverlayToolbar]|" options:0 metrics:nil views:dict]];
-    nowPlayingOverlayToolbar.alpha = 0;
+    //NSDictionary *dict = NSDictionaryOfVariableBindings(nowPlayingOverlayToolbar);
+    //[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:[nowPlayingOverlayToolbar]|" options:0 metrics:nil views:dict]];
+    //[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[nowPlayingOverlayToolbar]|" options:0 metrics:nil views:dict]];
+    //nowPlayingOverlayToolbar.alpha = 0;
+    CGRect frame = self.view.frame;
+
+    watched = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *watched_logo = [[BMPResourceManager resourceImageNamed:@"Watched"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    watched.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame), 80, 80);
+    [watched addTarget:self action:@selector(bmp_closeTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [watched setImage:watched_logo forState:UIControlStateNormal];
+    watched.tintColor = [UIColor whiteColor];
+    [self.view addSubview:watched];
+
+    download = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *download_logo = [[BMPResourceManager resourceImageNamed:@"Download"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    download.frame = CGRectMake(CGRectGetMidX(frame) - 40, CGRectGetMaxY(frame), 80, 80);
+    [download addTarget:self action:@selector(bmp_saveTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [download setImage:download_logo forState:UIControlStateNormal];
+    download.tintColor = [UIColor whiteColor];
+    [self.view addSubview:download];
+
+    return_button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *return_logo = [[BMPResourceManager resourceImageNamed:@"Return"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    return_button.frame = CGRectMake(0 , CGRectGetMaxY(frame), 80, 80);
+    [return_button addTarget:self action:@selector(bmp_returnTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [return_button setImage:return_logo forState:UIControlStateNormal];
+    return_button.tintColor = [UIColor whiteColor];
+    [self.view addSubview:return_button];
+    hidden_bar = false;
 }
 
 /**
@@ -252,9 +281,35 @@ static UIToolbar *nowPlayingOverlayToolbar;
  */
 %new
 - (void)bmp_toggleOverlayControls{
-    [UIView animateWithDuration:0.3 animations:^{
+    CGRect frame = self.view.frame;
+    /*[UIView animateWithDuration:0.3 animations:^{
         nowPlayingOverlayToolbar.alpha = nowPlayingOverlayToolbar.alpha ? 0.0f : 1.0f;
     } completion:nil];
+    */
+if (hidden_bar){
+    [UIView animateWithDuration:0.3 animations:^{
+        watched.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame)-80, 80, 80);
+    } completion:nil];
+    [UIView animateWithDuration:0.3 animations:^{
+        download.frame = CGRectMake(CGRectGetMidX(frame) - 40, CGRectGetMaxY(frame) - 80, 80, 80);
+    } completion:nil];
+    [UIView animateWithDuration:0.3 animations:^{
+        return_button.frame = CGRectMake(0 , CGRectGetMaxY(frame) - 80, 80, 80);
+    } completion:nil];
+    hidden_bar = false;
+}
+else{
+    [UIView animateWithDuration:0.3 animations:^{
+        watched.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame), 80, 80);
+    } completion:nil];
+    [UIView animateWithDuration:0.3 animations:^{
+        download.frame = CGRectMake(CGRectGetMidX(frame) - 40, CGRectGetMaxY(frame), 80, 80);
+    } completion:nil];
+    [UIView animateWithDuration:0.3 animations:^{
+        return_button.frame = CGRectMake(0 , CGRectGetMaxY(frame), 80, 80);
+    } completion:nil];
+    hidden_bar = true;
+}
 }
 
 %new
@@ -322,6 +377,7 @@ static UIToolbar *nowPlayingOverlayToolbar;
 	 * 
 	 * - nin9tyfour
 	 */
+    hidden_bar = true;
     [self bmp_toggleOverlayControls];
     if (shouldEndPlayback){
         %orig;
