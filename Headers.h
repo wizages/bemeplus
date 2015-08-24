@@ -40,8 +40,18 @@ typedef enum {high, medium, low} Quality;
 
 @class BMStackModel;
 
+@interface BMPlayer : AVPlayer
+// new
+- (void)bmp_restartVideo;
+@end
+
+@interface AVPlayerItem (BMP_Private)
+- (AVPlayer *)_player;
+@end
+
 @interface BMPlayerViewController : UIViewController <UIGestureRecognizerDelegate>
 @property(nonatomic, weak) BMStackModel *stack;
+@property(retain, nonatomic) BMPlayer *player;
 - (void)onNoLongerTouching;
 - (void)playbackDidEnd;
 - (void)playURL:(NSURL *)url;

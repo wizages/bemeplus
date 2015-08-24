@@ -365,7 +365,9 @@ else{
 
 %new
 -(void)bmp_replayTapped:(UIButton *)button{
-    [self playURL:current_url];
+    // [self playURL:current_url];
+    BMPlayer *player = [self player];
+    [player bmp_restartVideo];
 }
 
 - (void)onNoLongerTouching{
@@ -568,21 +570,19 @@ static BOOL version_supported(void){
 
 %end
 
-@interface BMPlayer : AVPlayer
-@end
-
-@interface AVPlayerItem (BMP_Private)
-- (AVPlayer *)_player;
-@end
-
 %hook BMPlayer
+
+%new
+- (void)bmp_restartVideo{
+    AVPlayerItem *item = [self currentItem];
+    [item seekToTime:kCMTimeZero];
+    [self play];
+}
 
 - (void)itemDidReachEnd:(NSNotification *)notification{
     AVPlayerItem *item = (AVPlayerItem *)[notification object];
-    [item seekToTime:kCMTimeZero];
-
     BMPlayer *player = (BMPlayer *)[item _player];
-    [player play];
+    [player bmp_restartVideo];
 }
 
 %end
