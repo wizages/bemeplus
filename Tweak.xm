@@ -568,6 +568,25 @@ static BOOL version_supported(void){
 
 %end
 
+@interface BMPlayer : AVPlayer
+@end
+
+@interface AVPlayerItem (BMP_Private)
+- (AVPlayer *)_player;
+@end
+
+%hook BMPlayer
+
+- (void)itemDidReachEnd:(NSNotification *)notification{
+    AVPlayerItem *item = (AVPlayerItem *)[notification object];
+    [item seekToTime:kCMTimeZero];
+
+    BMPlayer *player = (BMPlayer *)[item _player];
+    [player play];
+}
+
+%end
+
 %ctor{
     if (version_supported() == NO)
     {
