@@ -207,7 +207,9 @@ static UIToolbar *nowPlayingOverlayToolbar;
 static UIButton *watched;
 static UIButton *download;
 static UIButton *return_button;
+static UIButton *replay_button;
 static BOOL hidden_bar;
+static NSURL *current_url;
 
 
 - (void)viewDidLoad{
@@ -220,6 +222,11 @@ static BOOL hidden_bar;
     tapRecognizer.numberOfTapsRequired = 1;
     tapRecognizer.delegate = self;
     [self.view addGestureRecognizer:tapRecognizer];
+}
+
+- (void)playURL:(NSURL *)url{
+    %orig;
+    current_url = url;
 }
 
 %new
@@ -250,19 +257,17 @@ static BOOL hidden_bar;
 
     watched = [UIButton buttonWithType:UIButtonTypeCustom];
     UIImage *watched_logo = [[BMPResourceManager resourceImageNamed:@"Watched"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    watched.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame), 80, 80);
+    watched.frame = CGRectMake(80, CGRectGetMaxY(frame), 80, 80);
     [watched addTarget:self action:@selector(bmp_closeTapped:) forControlEvents:UIControlEventTouchUpInside];
     [watched setImage:watched_logo forState:UIControlStateNormal];
     watched.tintColor = [UIColor whiteColor];
-    [self.view addSubview:watched];
 
     download = [UIButton buttonWithType:UIButtonTypeCustom];
     UIImage *download_logo = [[BMPResourceManager resourceImageNamed:@"Download"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    download.frame = CGRectMake(CGRectGetMidX(frame) - 40, CGRectGetMaxY(frame), 80, 80);
+    download.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame), 80, 80);
     [download addTarget:self action:@selector(bmp_saveTapped:) forControlEvents:UIControlEventTouchUpInside];
     [download setImage:download_logo forState:UIControlStateNormal];
     download.tintColor = [UIColor whiteColor];
-    [self.view addSubview:download];
 
     return_button = [UIButton buttonWithType:UIButtonTypeCustom];
     UIImage *return_logo = [[BMPResourceManager resourceImageNamed:@"Return"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -270,8 +275,19 @@ static BOOL hidden_bar;
     [return_button addTarget:self action:@selector(bmp_returnTapped:) forControlEvents:UIControlEventTouchUpInside];
     [return_button setImage:return_logo forState:UIControlStateNormal];
     return_button.tintColor = [UIColor whiteColor];
-    [self.view addSubview:return_button];
+
+    replay_button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *replay_logo = [[BMPResourceManager resourceImageNamed:@"Return"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    replay_button.frame = CGRectMake(160 , CGRectGetMaxY(frame), 80, 80);
+    [replay_button addTarget:self action:@selector(bmp_replayTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [replay_button setImage:replay_logo forState:UIControlStateNormal];
+    replay_button.tintColor = [UIColor whiteColor];
+
     hidden_bar = false;
+    [self.view addSubview:return_button];
+    [self.view addSubview:download];
+    [self.view addSubview:watched];
+    [self.view addSubview:replay_button];
 }
 
 /**
@@ -282,31 +298,23 @@ static BOOL hidden_bar;
 %new
 - (void)bmp_toggleOverlayControls{
     CGRect frame = self.view.frame;
-    /*[UIView animateWithDuration:0.3 animations:^{
-        nowPlayingOverlayToolbar.alpha = nowPlayingOverlayToolbar.alpha ? 0.0f : 1.0f;
-    } completion:nil];
-    */
 if (hidden_bar){
+
     [UIView animateWithDuration:0.3 animations:^{
-        watched.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame)-80, 80, 80);
-    } completion:nil];
-    [UIView animateWithDuration:0.3 animations:^{
-        download.frame = CGRectMake(CGRectGetMidX(frame) - 40, CGRectGetMaxY(frame) - 80, 80, 80);
-    } completion:nil];
-    [UIView animateWithDuration:0.3 animations:^{
+        download.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame)-80, 80, 80);
+        watched.frame = CGRectMake(80, CGRectGetMaxY(frame) - 80, 80, 80);
         return_button.frame = CGRectMake(0 , CGRectGetMaxY(frame) - 80, 80, 80);
+        replay_button.frame = CGRectMake(160 , CGRectGetMaxY(frame) - 80, 80, 80);
     } completion:nil];
     hidden_bar = false;
 }
 else{
+
     [UIView animateWithDuration:0.3 animations:^{
-        watched.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame), 80, 80);
-    } completion:nil];
-    [UIView animateWithDuration:0.3 animations:^{
-        download.frame = CGRectMake(CGRectGetMidX(frame) - 40, CGRectGetMaxY(frame), 80, 80);
-    } completion:nil];
-    [UIView animateWithDuration:0.3 animations:^{
+        download.frame = CGRectMake(CGRectGetMaxX(frame)-80, CGRectGetMaxY(frame), 80, 80);
+        watched.frame = CGRectMake(80, CGRectGetMaxY(frame), 80, 80);
         return_button.frame = CGRectMake(0 , CGRectGetMaxY(frame), 80, 80);
+        replay_button.frame = CGRectMake(160 , CGRectGetMaxY(frame), 80, 80);
     } completion:nil];
     hidden_bar = true;
 }
@@ -335,24 +343,29 @@ else{
 }
 
 %new
-- (void)bmp_closeTapped:(UIBarButtonItem *)button{
+- (void)bmp_closeTapped:(UIButton *)button{
     [downloadQueue cancelAllOperations];
     shouldEndPlayback = YES;
     [self onNoLongerTouching];
 }
 
 %new
--(void)bmp_returnTapped:(UIBarButtonItem *)button{
+-(void)bmp_returnTapped:(UIButton *)button{
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 %new
-- (void)bmp_saveTapped:(UIBarButtonItem *)button{
+- (void)bmp_saveTapped:(UIButton *)button{
     NSArray *urlArray = bmp_arrayOfURLSInDescendingQualityFromURL(self.bmp_currentURL);
     [sharedAlertController createProgressHUDInView:self.view title:@"Downloading" message:nil];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         saveFilesWithStack(urlArray, self.stack);
     });
+}
+
+%new
+-(void)bmp_replayTapped:(UIButton *)button{
+    [self playURL:current_url];
 }
 
 - (void)onNoLongerTouching{
