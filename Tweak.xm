@@ -365,7 +365,6 @@ else{
 
 %new
 -(void)bmp_replayTapped:(UIButton *)button{
-    // [self playURL:current_url];
     BMPlayer *player = [self player];
     [player bmp_restartVideo];
 }
