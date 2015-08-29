@@ -3,7 +3,7 @@ extern NSString * const kBMPLoopVideoKey;
 extern NSString * const kBMPEnablePasscodeKey;
 extern NSString * const kBMPPasscodeValueKey;
 
-#define BMPSharedSettingsManager [NIFSettingsManager sharedManager]
+#define BMPSharedSettingsManager [BMPSettingsManager sharedSettngsManager]
 #define BMPSharedSetting(setting) [BMPSharedSettingsManager setting]
 
 @interface BMPSettingsManager : NSObject

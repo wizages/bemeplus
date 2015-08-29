@@ -6,6 +6,8 @@
 #import "LoggingMacros.h"
 #import <JGProgressHUD/JGProgressHUD.h>
 #import "BMPResourceManager.h"
+#import <AVFoundation/AVFoundation.h>
+#import "BMPSettingsManager.h"
 
 
 
@@ -124,4 +126,11 @@ typedef enum {high, medium, low} Quality;
 
 @interface UIView (BMP_Private)
 @property (assign,nonatomic) BOOL deliversTouchesForGesturesToSuperview;
+@end
+
+@interface BMViewController : UIViewController
+@end
+
+@interface BMCurrentUserInfoViewController : BMViewController
+@property (retain, nonatomic) NSArray *dataSource;
 @end

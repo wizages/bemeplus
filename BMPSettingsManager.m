@@ -85,4 +85,8 @@ NSString * const kBMPPasscodeValueKey = @"BMPPasscodeValue";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (void)logResponse:(BOOL)response{
+    NSLog(@"%i", (int)response);
+}
+
 @end
