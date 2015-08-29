@@ -16,17 +16,10 @@
 
 + (id)resultKeyPathForJSONDictionary:(id)arg1;
 + (id)metaJSONTransformer;
++ (id)responseWithHTTPResponse:(id)arg1 JSONObject:(id)arg2 resultClass:(Class)arg3;
 @property(nonatomic) long long statusCode; // @synthesize statusCode=_statusCode;
 @property(readonly, nonatomic) BMMeta *meta; // @synthesize meta=_meta;
 - (void).cxx_destruct;
-- (_Bool)forbidden;
-- (_Bool)notFound;
-- (_Bool)notAcceptable;
-- (_Bool)unauthorized;
-- (_Bool)badRequest;
-- (_Bool)noContent;
-- (_Bool)accepted;
-- (unsigned long long)responseType;
 
 @end
 

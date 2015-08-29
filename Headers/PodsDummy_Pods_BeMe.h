@@ -6,7 +6,7 @@
 
 #import "NSObject.h"
 
-@interface PodsDummy_Pods_BeMe : NSObject
+@interface PodsDummy_Pods_Beme : NSObject
 {
 }
 

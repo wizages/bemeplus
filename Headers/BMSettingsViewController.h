@@ -25,7 +25,13 @@
 - (id)tableView:(id)arg1 cellForRowAtIndexPath:(id)arg2;
 - (long long)tableView:(id)arg1 numberOfRowsInSection:(long long)arg2;
 - (long long)numberOfSectionsInTableView:(id)arg1;
+- (id)tableView:(id)arg1 viewForHeaderInSection:(long long)arg2;
+- (double)tableView:(id)arg1 heightForHeaderInSection:(long long)arg2;
 - (double)tableView:(id)arg1 heightForRowAtIndexPath:(id)arg2;
+- (void)nukeAllStacks;
+- (void)displayNukeAllStacksWarning;
+- (void)openEmailWithSupportTag:(id)arg1;
+- (void)contactSupport;
 - (void)defineLayout;
 - (void)viewDidLoad;
 

@@ -8,7 +8,8 @@
 
 @class NSNumber, NSString;
 
-@interface GVUserDefaults (BeMe)
+@interface GVUserDefaults (Beme)
+- (id)buildType;
 - (id)transformKey:(id)arg1;
 - (id)setupDefaults;
 
@@ -19,6 +20,9 @@
 @property(nonatomic) __weak NSString *authTierString; // @dynamic authTierString;
 @property(nonatomic) __weak NSNumber *beenSeconds; // @dynamic beenSeconds;
 @property(nonatomic) __weak NSNumber *beenUsers; // @dynamic beenUsers;
+@property(nonatomic) __weak NSString *buildDate; // @dynamic buildDate;
+@property(nonatomic) __weak NSString *buildIdentifier; // @dynamic buildIdentifier;
+@property(nonatomic) __weak NSString *buildVersion; // @dynamic buildVersion;
 @property(nonatomic) _Bool isFirstLaunch; // @dynamic isFirstLaunch;
 @property(nonatomic) _Bool rejectAnonymousReactions; // @dynamic rejectAnonymousReactions;
 @property(nonatomic) _Bool uploadedAPNSToken; // @dynamic uploadedAPNSToken;

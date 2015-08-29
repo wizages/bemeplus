@@ -8,11 +8,12 @@
 
 #import "MTLJSONSerializing.h"
 
-@class BMUserModel, NSDate, NSNumber, NSString;
+@class BMUserModel, NSDate, NSNumber, NSString, NSURL;
 
 @interface BMInviteModel : MTLModel <MTLJSONSerializing>
 {
     NSString *_code;
+    NSURL *_codeURL;
     NSDate *_createdAt;
     NSNumber *_usesRemaining;
     BMUserModel *_createdByUser;
@@ -21,10 +22,12 @@
 + (id)inviteJSONTransformer;
 + (id)createdByUserJSONTransformer;
 + (id)createdAtJSONTransformer;
++ (id)codeURLJSONTransformer;
 + (id)JSONKeyPathsByPropertyKey;
 @property(readonly, copy, nonatomic) BMUserModel *createdByUser; // @synthesize createdByUser=_createdByUser;
 @property(readonly, copy, nonatomic) NSNumber *usesRemaining; // @synthesize usesRemaining=_usesRemaining;
 @property(readonly, copy, nonatomic) NSDate *createdAt; // @synthesize createdAt=_createdAt;
+@property(readonly, copy, nonatomic) NSURL *codeURL; // @synthesize codeURL=_codeURL;
 @property(readonly, copy, nonatomic) NSString *code; // @synthesize code=_code;
 - (void).cxx_destruct;
 

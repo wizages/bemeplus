@@ -6,45 +6,61 @@
 
 #import "BMViewController.h"
 
-//#import "UITableViewDataSource.h"
-//#import "UITableViewDelegate.h"
+#import "BMCurrentUserInfoHeaderCellDelegate.h"
+#import "BMCurrentUserInfoProfileImageGestureView.h"
+#import "UITableViewDataSource.h"
+#import "UITableViewDelegate.h"
 
-@class NSArray, NSString, UITableView;
+@class BMCurrentUserInfoProfileImageGestureView, BMSnakeProgressView, NSArray, NSString, UIImageView, UITableView;
 
-@interface BMCurrentUserInfoViewController : BMViewController <UITableViewDelegate, UITableViewDataSource>
+@interface BMCurrentUserInfoViewController : BMViewController <UITableViewDelegate, UITableViewDataSource, BMCurrentUserInfoHeaderCellDelegate, BMCurrentUserInfoProfileImageGestureView>
 {
+    _Bool _displayLoadingProfileImage;
+    UIImageView *_backgroundImageView;
     UITableView *_tableView;
     NSArray *_dataSource;
+    BMSnakeProgressView *_profileImageDownloadProgressView;
+    BMCurrentUserInfoProfileImageGestureView *_profileImageGestureView;
 }
 
+@property(retain, nonatomic) BMCurrentUserInfoProfileImageGestureView *profileImageGestureView; // @synthesize profileImageGestureView=_profileImageGestureView;
+@property(nonatomic) _Bool displayLoadingProfileImage; // @synthesize displayLoadingProfileImage=_displayLoadingProfileImage;
+@property(retain, nonatomic) BMSnakeProgressView *profileImageDownloadProgressView; // @synthesize profileImageDownloadProgressView=_profileImageDownloadProgressView;
 @property(retain, nonatomic) NSArray *dataSource; // @synthesize dataSource=_dataSource;
 @property(retain, nonatomic) UITableView *tableView; // @synthesize tableView=_tableView;
-//- (void).cxx_destruct;
-- (void)updateSettingsWithFollowingCount:(id)arg1 followerCount:(id)arg2;
+@property(retain, nonatomic) UIImageView *backgroundImageView; // @synthesize backgroundImageView=_backgroundImageView;
+- (void).cxx_destruct;
+- (id)standardCellAtIndexPath:(id)arg1;
+- (id)headerCellAtIndexPath:(id)arg1;
+- (void)image:(id)arg1 didFinishSavingWithError:(id)arg2 contextInfo:(void *)arg3;
+- (void)saveMenuItemWasSelected:(id)arg1;
+- (void)shareLinkWasSelected;
+- (void)shareLinkButtonWasSelected:(id)arg1;
+- (id)tableView:(id)arg1 viewForHeaderInSection:(long long)arg2;
+- (double)tableView:(id)arg1 heightForHeaderInSection:(long long)arg2;
 - (void)tableView:(id)arg1 didSelectRowAtIndexPath:(id)arg2;
 - (id)tableView:(id)arg1 cellForRowAtIndexPath:(id)arg2;
 - (long long)tableView:(id)arg1 numberOfRowsInSection:(long long)arg2;
 - (long long)numberOfSectionsInTableView:(id)arg1;
 - (double)tableView:(id)arg1 heightForRowAtIndexPath:(id)arg2;
-- (void)contactSupport;
+- (void)updateProfileImageURL:(id)arg1;
 - (void)displaySettings;
 - (void)displayFollowers;
 - (void)displayFollowing;
 - (void)displayFindFriends;
-- (void)displayUnlockCodes;
+- (void)updateBackgroundImageLayoutConstraintsWithContentOffsetY:(double)arg1;
 - (void)defineLayout;
 - (void)setupSubviews;
+- (void)viewWillDisappear:(_Bool)arg1;
+- (void)viewDidAppear:(_Bool)arg1;
 - (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;
 - (void)dealloc;
 
-
-- (void)bemePage;
-- (void)upload;
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;
 @property(readonly, copy) NSString *description;
-//@property(readonly) unsigned long long hash;
+@property(readonly) unsigned long long hash;
 @property(readonly) Class superclass;
 
 @end

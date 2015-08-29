@@ -6,21 +6,29 @@
 
 #import "BMClipOperation.h"
 
-@class NSURLSessionUploadTask;
+@class AFHTTPRequestOperation, AFHTTPRequestOperationManager;
 
 @interface BMUploadOperation : BMClipOperation
 {
-    _Bool _shouldRefetchURL;
-    NSURLSessionUploadTask *_uploadTask;
+    id <BMUploadOperationDelegate> _delegate;
+    AFHTTPRequestOperationManager *_operationManager;
+    AFHTTPRequestOperation *_operation;
+    double _progress;
 }
 
-@property(nonatomic) _Bool shouldRefetchURL; // @synthesize shouldRefetchURL=_shouldRefetchURL;
-@property(retain, nonatomic) NSURLSessionUploadTask *uploadTask; // @synthesize uploadTask=_uploadTask;
++ (id)name;
+@property(nonatomic) double progress; // @synthesize progress=_progress;
+@property(retain, nonatomic) AFHTTPRequestOperation *operation; // @synthesize operation=_operation;
+@property(retain, nonatomic) AFHTTPRequestOperationManager *operationManager; // @synthesize operationManager=_operationManager;
+@property(nonatomic) __weak id <BMUploadOperationDelegate> delegate; // @synthesize delegate=_delegate;
 - (void).cxx_destruct;
-- (void)URLSession:(id)arg1 didReceiveChallenge:(id)arg2 completionHandler:(CDUnknownBlockType)arg3;
-- (void)BMVersionSignedURLMethod;
+- (_Bool)clipURLHasExpired;
+- (void)refetchSignedURL:(CDUnknownBlockType)arg1;
+- (void)performUploadClipWithOperationManager;
 - (void)performOperation;
+- (void)abort;
 - (id)init;
+- (void)dealloc;
 
 @end
 

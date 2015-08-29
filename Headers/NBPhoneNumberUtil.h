@@ -6,26 +6,36 @@
 
 #import "NSObject.h"
 
-@class CTTelephonyNetworkInfo, NSBundle, NSDictionary, NSLock, NSMutableDictionary;
+@class CTTelephonyNetworkInfo, NSBundle, NSDictionary, NSLock, NSMutableDictionary, NSRegularExpression;
 
 @interface NBPhoneNumberUtil : NSObject
 {
-    NSMutableDictionary *entireStringRegexCache;
-    NSLock *entireStringCacheLock;
-    NSMutableDictionary *regexPatternCache;
-    NSLock *lockPatternCache;
     NSBundle *_libPhoneBundle;
+    NSLock *_entireStringCacheLock;
+    NSMutableDictionary *_entireStringRegexCache;
+    NSLock *_lockPatternCache;
+    NSMutableDictionary *_regexPatternCache;
     NSMutableDictionary *_i18nNumberFormat;
     NSMutableDictionary *_i18nPhoneNumberDesc;
     NSMutableDictionary *_i18nPhoneMetadata;
+    NSRegularExpression *_PLUS_CHARS_PATTERN;
+    NSRegularExpression *_CAPTURING_DIGIT_PATTERN;
+    NSRegularExpression *_VALID_ALPHA_PHONE_PATTERN;
     CTTelephonyNetworkInfo *_telephonyNetworkInfo;
 }
 
 + (id)sharedInstance;
 @property(retain, nonatomic) CTTelephonyNetworkInfo *telephonyNetworkInfo; // @synthesize telephonyNetworkInfo=_telephonyNetworkInfo;
+@property(retain, nonatomic) NSRegularExpression *VALID_ALPHA_PHONE_PATTERN; // @synthesize VALID_ALPHA_PHONE_PATTERN=_VALID_ALPHA_PHONE_PATTERN;
+@property(retain, nonatomic) NSRegularExpression *CAPTURING_DIGIT_PATTERN; // @synthesize CAPTURING_DIGIT_PATTERN=_CAPTURING_DIGIT_PATTERN;
+@property(retain, nonatomic) NSRegularExpression *PLUS_CHARS_PATTERN; // @synthesize PLUS_CHARS_PATTERN=_PLUS_CHARS_PATTERN;
 @property(retain, nonatomic) NSMutableDictionary *i18nPhoneMetadata; // @synthesize i18nPhoneMetadata=_i18nPhoneMetadata;
 @property(retain, nonatomic) NSMutableDictionary *i18nPhoneNumberDesc; // @synthesize i18nPhoneNumberDesc=_i18nPhoneNumberDesc;
 @property(retain, nonatomic) NSMutableDictionary *i18nNumberFormat; // @synthesize i18nNumberFormat=_i18nNumberFormat;
+@property(retain, nonatomic) NSMutableDictionary *regexPatternCache; // @synthesize regexPatternCache=_regexPatternCache;
+@property(retain, nonatomic) NSLock *lockPatternCache; // @synthesize lockPatternCache=_lockPatternCache;
+@property(retain, nonatomic) NSMutableDictionary *entireStringRegexCache; // @synthesize entireStringRegexCache=_entireStringRegexCache;
+@property(retain, nonatomic) NSLock *entireStringCacheLock; // @synthesize entireStringCacheLock=_entireStringCacheLock;
 @property(readonly, nonatomic) NSBundle *libPhoneBundle; // @synthesize libPhoneBundle=_libPhoneBundle;
 - (void).cxx_destruct;
 - (_Bool)matchesEntirely:(id)arg1 string:(id)arg2;
@@ -46,6 +56,7 @@
 - (int)maybeStripInternationalPrefixAndNormalize:(id *)arg1 possibleIddPrefix:(id)arg2;
 - (_Bool)parsePrefixAsIdd:(id)arg1 sourceString:(id *)arg2;
 - (id)maybeExtractCountryCode:(id)arg1 metadata:(id)arg2 nationalNumber:(id *)arg3 keepRawInput:(_Bool)arg4 phoneNumber:(id *)arg5 error:(id *)arg6;
+- (id)getSupportedRegions;
 - (id)extractCountryCode:(id)arg1 nationalNumber:(id *)arg2;
 - (_Bool)truncateTooLongNumber:(id)arg1;
 - (_Bool)isPossibleNumberString:(id)arg1 regionDialingFrom:(id)arg2 error:(id *)arg3;

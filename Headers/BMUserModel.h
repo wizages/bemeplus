@@ -47,7 +47,7 @@
 - (void).cxx_destruct;
 - (unsigned long long)hash;
 - (_Bool)isEqual:(id)arg1;
-- (_Bool)isActive;
+- (id)isActive;
 - (id)initWithDictionary:(id)arg1 error:(id *)arg2;
 
 @end

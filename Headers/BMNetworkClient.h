@@ -11,25 +11,26 @@
     _Bool _isResettingCredentials;
 }
 
++ (id)sharedInstance;
 + (id)modelClassesByResourcePath;
 + (Class)responseClass;
 + (Class)errorModelClass;
-+ (id)BMNetS3Endpoint;
-+ (id)BMNetAmazonUploadBucket;
-+ (id)BMNetBaseURL;
-+ (id)BMNetUpdateURL;
-+ (id)URLFromStringByAddingClientBaseURLTransformer;
-+ (id)sharedInstance;
++ (id)networkBaseURL;
++ (id)networkUpdateURL;
 @property _Bool isResettingCredentials; // @synthesize isResettingCredentials=_isResettingCredentials;
+- (void)dealloc;
+- (id)init;
 - (id)mtl_modelFromReaction:(id)arg1;
 - (id)mtl_modelFromClip:(id)arg1;
 - (id)updateReaction:(id)arg1;
 - (id)createReaction:(id)arg1;
+- (id)nukeAllStacks;
 - (id)updateClip:(id)arg1;
 - (id)createClip:(id)arg1;
 - (id)refetchSignedURLForClip:(id)arg1;
 - (id)trackWatchedStackForStackID:(long long)arg1 clipID:(long long)arg2;
 - (id)trackViewedReactionsWithClipIDs:(id)arg1;
+- (id)postInviteFollowWithName:(id)arg1 code:(id)arg2;
 - (id)unfollowUsersWithIDs:(id)arg1;
 - (id)followUsersWithIDs:(id)arg1;
 - (id)followUserWithDisplayName:(id)arg1;
@@ -38,10 +39,11 @@
 - (id)updateSearchBySMSPreference:(_Bool)arg1;
 - (id)updateUserAnonymousReactionsPreference:(_Bool)arg1;
 - (id)uploadContacts:(id)arg1;
-- (id)reportUser:(id)arg1;
+- (id)reportWithContentOwnerUserIdentifier:(id)arg1 contentType:(id)arg2 contentIdentifier:(id)arg3;
 - (id)blockUser:(id)arg1;
 - (id)fetchStrangers;
 - (id)fetchRecentCreatedUsers;
+- (id)fetchMe;
 - (id)fetchHomeWithPageID:(id)arg1;
 - (id)fetchHome;
 - (id)fetchRecommendedStacks;
@@ -52,13 +54,13 @@
 - (id)postCreateAccessCode;
 - (id)fetchAcceptedInvites;
 - (id)postSMSConfirmWithVerifyCode:(id)arg1 challengeID:(id)arg2;
-- (id)postSMSValidatePhonenumber:(id)arg1;
-- (id)postLoginWithSMSChallengeWithUserName:(id)arg1 Phonenumber:(id)arg2;
+- (id)postSMSValidatePhoneNumber:(id)arg1;
+- (id)postLoginWithSMSChallengeWithUserName:(id)arg1 phoneNumber:(id)arg2;
+- (id)postUpdateStatusToActive;
 - (id)postReservationWithUserName:(id)arg1 latitude:(double)arg2 longitude:(double)arg3;
-- (id)postSignInWithUserName:(id)arg1 mobileNumber:(id)arg2;
+- (id)postCheckUsernameAvailability:(id)arg1;
 - (id)postSignInWithVerifyCode:(id)arg1 challengeID:(id)arg2 userName:(id)arg3;
 - (id)postInstall;
-- (id)init;
 
 @end
 

@@ -6,7 +6,7 @@
 
 #import "UIFont.h"
 
-@interface UIFont (BeMe)
+@interface UIFont (Beme)
 + (id)beme_akkuratMonoFontWithSize:(double)arg1;
 + (id)beme_akkuratLightFontWithSize:(double)arg1;
 + (id)beme_loadAndReturnFont:(id)arg1 fontFileName:(id)arg2 extension:(id)arg3 size:(double)arg4 onceToken:(long long *)arg5;

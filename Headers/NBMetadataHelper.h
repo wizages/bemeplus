@@ -26,6 +26,7 @@
 - (id)regionCodeFromCountryCode:(id)arg1;
 - (id)getAllMetadata;
 - (void)clearHelper;
+- (id)CCode2CNMap;
 - (void)initializeHelper;
 
 @end

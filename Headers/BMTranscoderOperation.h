@@ -6,24 +6,20 @@
 
 #import "BMClipOperation.h"
 
-@class AVAssetExportSession, NSString, NSURL;
+@class AVAssetExportSession, NSURL;
 
 @interface BMTranscoderOperation : BMClipOperation
 {
-    id <BMTrancoderOperationDelegate> _delegate;
-    NSString *_identifier;
     AVAssetExportSession *_exportSession;
     NSURL *_outputURL;
 }
 
++ (id)name;
 @property(retain, nonatomic) NSURL *outputURL; // @synthesize outputURL=_outputURL;
 @property(retain, nonatomic) AVAssetExportSession *exportSession; // @synthesize exportSession=_exportSession;
-@property(readonly, copy, nonatomic) NSString *identifier; // @synthesize identifier=_identifier;
-@property(nonatomic) __weak id <BMTrancoderOperationDelegate> delegate; // @synthesize delegate=_delegate;
 - (void).cxx_destruct;
 - (void)performOperation;
-- (id)initWithClip:(id)arg1 identifier:(id)arg2 delegate:(id)arg3;
-- (id)initWithClip:(id)arg1;
+- (id)init;
 
 @end
 

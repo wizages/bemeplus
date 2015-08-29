@@ -7,7 +7,6 @@
 #import "NSObject.h"
 
 @protocol BMMainTopViewControllerDelegate <NSObject>
-- (void)unlockButtonWasSelected;
 - (void)reactionsButtonWasSelected;
 - (void)settingsButtonWasSelected;
 @end

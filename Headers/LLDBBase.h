@@ -19,7 +19,8 @@
 @property(nonatomic) __weak id <LLLocalyticsDelegate> localyticsDelegate; // @synthesize localyticsDelegate=_localyticsDelegate;
 @property(nonatomic) unsigned long long maxDatabaseSize; // @synthesize maxDatabaseSize=_maxDatabaseSize;
 - (void).cxx_destruct;
-- (id)databasePath:(id)arg1;
+- (_Bool)updateDB:(id)arg1 and:(id)arg2;
+- (id)queryDB:(id)arg1 and:(id)arg2;
 - (id)dictionaryForKeyValueTable:(id)arg1;
 - (_Bool)incrementColumn:(id)arg1 inTable:(id)arg2;
 - (_Bool)updateColumn:(id)arg1 toValue:(id)arg2 inTable:(id)arg3;
@@ -43,7 +44,7 @@
 - (void)prepareForOpen;
 - (id)connectAndOpenNewDBWithFilePath:(id)arg1;
 - (void)dealloc;
-- (id)initWithName:(id)arg1 andLocalyticsDelegate:(id)arg2;
+- (id)initWithLocalyticsDelegate:(id)arg1 databasePath:(id)arg2;
 
 @end
 

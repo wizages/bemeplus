@@ -10,14 +10,16 @@
 #import "LLDownloaderDataDestination.h"
 #import "LLMessagingDelegate.h"
 
-@class LLMarketingDB, LLMarketingDownloader, NSString, UIAlertView, UIImage;
+@class LLFrequencyCappingEngine, LLMarketingDB, LLMarketingDownloader, NSString, UIAlertView, UIImage;
 
 @interface LLInAppManager : LLManagerBase <LLAnalyticsDelegate, LLMessagingDelegate, LLDownloaderDataDestination>
 {
+    _Bool _processingInAppDisplay;
     _Bool _requestPushTestOnBackgrounded;
     unsigned long long _inAppMessageDismissButtonLocation;
     UIImage *_dismissButtonImage;
     LLMarketingDB *_db;
+    LLFrequencyCappingEngine *_fcEngine;
     LLMarketingDownloader *_networkHandler;
     CDUnknownBlockType _startSessionBlock;
     NSString *_pushTestModeCampaignId;
@@ -27,10 +29,7 @@
     NSString *_installId;
 }
 
-+ (id)zipFilePathForRuleId:(long long)arg1;
-+ (id)inAppMsgDataDirectory;
 + (_Bool)ampRulePointsToZip:(id)arg1;
-+ (_Bool)downloadAndSaveZipForAmpRule:(id)arg1 destination:(id)arg2;
 + (id)URLForAmpRule:(id)arg1;
 + (_Bool)shouldUseTabletCreative:(id)arg1;
 @property(readonly, copy, nonatomic) NSString *installId; // @synthesize installId=_installId;
@@ -41,10 +40,12 @@
 @property(nonatomic) _Bool requestPushTestOnBackgrounded; // @synthesize requestPushTestOnBackgrounded=_requestPushTestOnBackgrounded;
 @property(copy) CDUnknownBlockType startSessionBlock; // @synthesize startSessionBlock=_startSessionBlock;
 @property(retain, nonatomic) LLMarketingDownloader *networkHandler; // @synthesize networkHandler=_networkHandler;
+@property(retain, nonatomic) LLFrequencyCappingEngine *fcEngine; // @synthesize fcEngine=_fcEngine;
 @property(retain, nonatomic) LLMarketingDB *db; // @synthesize db=_db;
 @property(nonatomic) unsigned long long inAppMessageDismissButtonLocation; // @synthesize inAppMessageDismissButtonLocation=_inAppMessageDismissButtonLocation;
 - (void).cxx_destruct;
 - (void)downloadDidCompleteWithResponseData:(id)arg1;
+- (void)processInAppJsonObject:(id)arg1;
 - (void)setInAppDismissButtonLocation:(unsigned long long)arg1;
 @property(retain, nonatomic) UIImage *dismissButtonImage; // @synthesize dismissButtonImage=_dismissButtonImage;
 - (void)setDismissButtonImageWithName:(id)arg1;
@@ -57,6 +58,7 @@
 - (void)requestPushTest;
 - (_Bool)handleURL:(id)arg1;
 - (_Bool)decompressZipDataForRule:(id)arg1 withId:(long long)arg2;
+- (_Bool)downloadAndSaveZipForAmpRule:(id)arg1 destination:(id)arg2;
 - (id)downloadInAppMsgDataForRule:(id)arg1 error:(id *)arg2;
 - (void)showInAppMsgForMessage:(id)arg1 withTriggeringAttributes:(id)arg2 setDidDisplay:(_Bool)arg3;
 - (void)showInAppMsgForMessage:(id)arg1;
@@ -68,6 +70,7 @@
 - (id)ampMessageDictionaryForRuleId:(unsigned long long)arg1;
 - (id)fetchInAppMsgHTMLForRule:(id)arg1;
 - (void)dismissCurrentInAppMessage;
+- (void)tagAmpActionEventForControlGroupWithMessage:(id)arg1;
 - (void)triggerInAppMsgWithRuleId:(unsigned long long)arg1;
 - (void)triggerInAppMsgWithEvent:(id)arg1 andAttributes:(id)arg2;
 - (void)triggerInAppMsgWithEvent:(id)arg1;
@@ -77,6 +80,7 @@
 - (void)localyticsSessionDidOpen:(_Bool)arg1 isUpgrade:(_Bool)arg2 isResume:(_Bool)arg3;
 - (void)downloadWithCustomerId:(id)arg1;
 - (void)prepare;
+@property(nonatomic, getter=isProcessingInAppDisplay) _Bool processingInAppDisplay; // @synthesize processingInAppDisplay=_processingInAppDisplay;
 @property _Bool testModeEnabled;
 
 // Remaining properties

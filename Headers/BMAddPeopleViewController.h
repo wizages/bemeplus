@@ -40,7 +40,7 @@
 - (id)init;
 - (void)dealloc;
 - (id)userForIndexPath:(id)arg1;
-- (void)contactImporter:(id)arg1 didCompleteWithPhoneNumbers:(id)arg2;
+- (void)contactImporter:(id)arg1 didCompleteWithContactsAsDictionaryRepresentations:(id)arg2;
 - (void)contactImporter:(id)arg1 failedWithAccessDeniedError:(id)arg2;
 - (id)importContactsCell;
 - (void)displayContactsImporting:(_Bool)arg1;

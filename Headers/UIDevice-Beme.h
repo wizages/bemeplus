@@ -10,6 +10,9 @@
 + (double)screenHeight;
 + (double)screenWidth;
 + (_Bool)isBigScreen;
++ (_Bool)is6Plus;
++ (_Bool)is6;
++ (_Bool)is5;
 + (_Bool)is4s;
 - (id)beme_modelIdentifier;
 - (id)beme_getSysInfoByName:(char *)arg1;

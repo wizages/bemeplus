@@ -42,6 +42,7 @@
 - (unsigned long long)sessionNumber;
 - (NSDictionary *)customDimensions;
 - (NSDictionary *)identifiers;
+- (NSString *)localyticsCacheDirectoryPath;
 - (NSString *)localyticsDirectoryPath;
 @end
 

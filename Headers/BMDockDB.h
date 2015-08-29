@@ -11,11 +11,14 @@
 }
 
 + (id)sharedInstance;
-- (void)performRetrivalSorting:(id)arg1;
-- (id)retreiveAll;
+- (void)cleanupDatabaseAndVideoFiles:(CDUnknownBlockType)arg1;
+- (void)purge;
+- (id)retrieveAll;
 - (void)delete:(id)arg1;
 - (void)update:(id)arg1;
 - (void)add:(id)arg1;
+- (void)performRetrievalSorting:(id)arg1;
+- (id)init;
 
 @end
 

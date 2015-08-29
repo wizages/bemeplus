@@ -40,6 +40,7 @@
 @property(getter=isHttpsEnabled) _Bool httpsEnabled; // @synthesize httpsEnabled=_httpsEnabled;
 @property _Bool useSandbox; // @synthesize useSandbox=_useSandbox;
 - (void).cxx_destruct;
+- (id)localyticsCacheDirectoryPath;
 - (id)localyticsDirectoryPath;
 - (id)customerIdInMemory;
 - (void)setSpecialCustomerIdentifierAndAttribute:(id)arg1 forKey:(id)arg2;
@@ -111,6 +112,8 @@
 - (void)setTestModeEnabled:(_Bool)arg1;
 - (_Bool)isOptedOut;
 - (void)setOptedOut:(_Bool)arg1;
+- (void)setInAppAdIdParameterEnabled:(_Bool)arg1;
+- (_Bool)isInAppAdIdParameterEnabled;
 - (void)setLoggingEnabled:(_Bool)arg1;
 - (_Bool)isLoggingEnabled;
 - (void)upload;

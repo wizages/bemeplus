@@ -6,71 +6,37 @@
 
 #import "BMViewController.h"
 
-#import "BMEarlyAccessViewControllerDelegate.h"
 #import "BMFeedViewControllerDelegate.h"
-#import "BMLandingViewControllerDelegate.h"
-#import "BMMUserPromotionDelegate.h"
 #import "BMMainTopViewControllerDelegate.h"
-#import "BMReserveUsernameViewControllerDelegate.h"
-#import "BMSignInViewControllerViewControllerDelegate.h"
 
-@class BMFeedViewController, BMLandingViewController, BMMainTopViewController, BMReaction, BMUserPromotionController, NSString, UIView;
+@class BMFeedViewController, BMMainTopViewController, BMReaction, NSString, UIView;
 
-@interface BMMainViewController : BMViewController <BMMainTopViewControllerDelegate, BMFeedViewControllerDelegate, BMLandingViewControllerDelegate, BMMUserPromotionDelegate, BMReserveUsernameViewControllerDelegate, BMSignInViewControllerViewControllerDelegate, BMEarlyAccessViewControllerDelegate>
+@interface BMMainViewController : BMViewController <BMMainTopViewControllerDelegate, BMFeedViewControllerDelegate>
 {
-    NSString *_unlockAccessCode;
     BMMainTopViewController *_topViewController;
     BMFeedViewController *_feedViewController;
-    BMLandingViewController *_landingViewController;
-    BMUserPromotionController *_userPromotionController;
     BMReaction *_reaction;
-    UIView *_mainContainerView;
     UIView *_topStatusBarView;
 }
 
 @property(retain, nonatomic) UIView *topStatusBarView; // @synthesize topStatusBarView=_topStatusBarView;
-@property(retain, nonatomic) UIView *mainContainerView; // @synthesize mainContainerView=_mainContainerView;
 @property(retain, nonatomic) BMReaction *reaction; // @synthesize reaction=_reaction;
-@property(retain, nonatomic) BMUserPromotionController *userPromotionController; // @synthesize userPromotionController=_userPromotionController;
-@property(retain, nonatomic) BMLandingViewController *landingViewController; // @synthesize landingViewController=_landingViewController;
 @property(retain, nonatomic) BMFeedViewController *feedViewController; // @synthesize feedViewController=_feedViewController;
 @property(retain, nonatomic) BMMainTopViewController *topViewController; // @synthesize topViewController=_topViewController;
-@property(retain, nonatomic) NSString *unlockAccessCode; // @synthesize unlockAccessCode=_unlockAccessCode;
 - (void).cxx_destruct;
-- (void)displaySMSNag;
-- (void)displayUnlockAccess;
 - (void)displayTutorial;
-- (void)displaySMSValidate;
-- (void)displaySignin;
 - (void)displayUserInfoPanel;
-- (void)displayReserveUsername;
-- (void)displayPreIntro;
 - (void)displayRecording;
 - (void)displayReactions;
-- (void)displayUnlockAccessWithCode:(id)arg1;
-- (void)showOnboarding;
-- (void)reserveButtonWasSelected;
-- (void)signinButtonWasSelected;
-- (void)showSMSNag;
 - (void)showTutorial;
 - (void)feedRefreshWasCalled;
-- (void)onReserveSuccess;
-- (void)accessCodeSuccessful;
-- (void)requestValidationCode;
-- (void)grantAccess;
-- (void)retrieveAccessCode;
-- (void)retrieveUsername;
-- (void)unlockButtonWasSelected;
 - (void)reactionsButtonWasSelected;
 - (void)settingsButtonWasSelected;
-- (void)checkAuthentication;
-- (void)displayFeed;
-- (void)displayLanding;
-- (void)topViewHidden:(_Bool)arg1 animated:(_Bool)arg2;
-- (void)updateDisplayMode:(_Bool)arg1;
+- (void)applyFollowUserLinkInfo:(id)arg1;
 - (void)defineLayout;
 - (void)setupSubviews;
-- (void)dealloc;
+- (void)viewWillDisappear:(_Bool)arg1;
+- (void)viewDidAppear:(_Bool)arg1;
 - (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;
 

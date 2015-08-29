@@ -10,7 +10,7 @@
 #import "BMVideoTouchEventDelegate.h"
 #import "UIGestureRecognizerDelegate.h"
 
-@class AVPlayerItem, AVPlayerLayer, BMPlayer, BMPlayerInfoLabelView, BMReactionCapture, BMReactionCaptureView, BMSnakeProgressView, BMStackModel, BMVideoTouchRecognizer, NSMutableDictionary, NSString, UIImageView, UIView;
+@class AVPlayerItem, AVPlayerLayer, BMPlayer, BMPlayerInfoLabelView, BMReactionCaptureController, BMReactionCaptureView, BMSnakeProgressView, BMStackModel, BMVideoTouchRecognizer, NSMutableDictionary, NSString, UIImageView, UIView;
 
 @interface BMPlayerViewController : UIViewController <BMVideoTouchEventDelegate, BMReactionCaptureViewDelegate, UIGestureRecognizerDelegate>
 {
@@ -19,7 +19,7 @@
     double _timeWatched;
     BMStackModel *_stack;
     unsigned long long _captureStatus;
-    BMReactionCapture *_reactionCapture;
+    BMReactionCaptureController *_reactionCapture;
     BMReactionCaptureView *_reactionCaptureView;
     UIView *_flashView;
     BMPlayerInfoLabelView *_labelView;
@@ -47,7 +47,7 @@
 @property(retain, nonatomic) UIView *flashView; // @synthesize flashView=_flashView;
 @property(nonatomic) _Bool reactionsEnabled; // @synthesize reactionsEnabled=_reactionsEnabled;
 @property(retain, nonatomic) BMReactionCaptureView *reactionCaptureView; // @synthesize reactionCaptureView=_reactionCaptureView;
-@property(retain, nonatomic) BMReactionCapture *reactionCapture; // @synthesize reactionCapture=_reactionCapture;
+@property(retain, nonatomic) BMReactionCaptureController *reactionCapture; // @synthesize reactionCapture=_reactionCapture;
 @property(nonatomic) unsigned long long captureStatus; // @synthesize captureStatus=_captureStatus;
 @property(nonatomic) __weak BMStackModel *stack; // @synthesize stack=_stack;
 @property(nonatomic) double timeWatched; // @synthesize timeWatched=_timeWatched;

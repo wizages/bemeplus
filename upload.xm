@@ -61,30 +61,32 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 
 %hook BMCurrentUserInfoViewController
 
-- (long long)tableView:(id)arg1 numberOfRowsInSection:(long long)arg2
+- (NSInteger)tableView:(id)arg1 numberOfRowsInSection:(NSInteger)arg2
 {
-	long long numberOfSection = %orig;
-	numberOfSection = numberOfSection + 1;
-	return numberOfSection;
+	return %orig+1;
+}
+
+- (void)setDataSource:(NSArray *)dataSource{
+	NSLog(@"Data source: %@", dataSource);
+	%orig;
 }
 
 - (id)tableView:(id)tableView cellForRowAtIndexPath:(NSIndexPath *)arg2 
 {
-	if (arg2.row == 0)
-	{
-	NSDictionary *mainDictionary = [self.dataSource objectAtIndex:0];
-	NSArray *data = [mainDictionary objectForKey:@"data"];
-	NSMutableArray *overideArray = [[NSMutableArray alloc] init];
-	NSAttributedString *ourString = [[NSAttributedString alloc] initWithString:@"Beme++"];
-	NSDictionary *ourRow = [[NSDictionary alloc] initWithObjectsAndKeys:@"bemePage", @"action", ourString, @"title", nil];
-	[overideArray addObject:ourRow];
-	[overideArray addObjectsFromArray:data];
-	data = [overideArray copy];
-	mainDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:data, @"data", @"Friends", @"title", nil];
-	self.dataSource = [[NSArray alloc] initWithObjects:mainDictionary, nil];
-	}
+	// if (arg2.row == 0)
+	// {
+	// NSDictionary *mainDictionary = [self.dataSource objectAtIndex:0];
+	// NSArray *data = [mainDictionary objectForKey:@"data"];
+	// NSMutableArray *overideArray = [[NSMutableArray alloc] init];
+	// NSAttributedString *ourString = [[NSAttributedString alloc] initWithString:@"Beme++"];
+	// NSDictionary *ourRow = [[NSDictionary alloc] initWithObjectsAndKeys:@"bemePage", @"action", ourString, @"title", nil];
+	// [overideArray addObject:ourRow];
+	// [overideArray addObjectsFromArray:data];
+	// data = [overideArray copy];
+	// mainDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:data, @"data", @"Friends", @"title", nil];
+	// self.dataSource = [[NSArray alloc] initWithObjects:mainDictionary, nil];
+	// }
 	
-	%orig;
 	return %orig;
 }
 
@@ -101,3 +103,8 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 	[self.navigationController pushViewController:settingsVC animated:YES];
 }
 %end
+
+%ctor{
+	return;
+	%init();
+}

@@ -8,7 +8,7 @@
 
 #import "BMReportActionDelegate.h"
 
-@class BMPlayerInfoLabelView, BMReactionContentViewController, BMReactionItemModel, NSArray, NSMutableArray, NSString, UIButton, UIImageView, UILabel;
+@class BMPlayerInfoLabelView, BMReactionItemModel, NSArray, NSMutableArray, NSString, UIButton, UIImageView, UILabel;
 
 @interface BMReactionsViewController : BMViewController <BMReportActionDelegate>
 {
@@ -17,10 +17,12 @@
     _Bool _endOfReactions;
     NSArray *_reactions;
     NSMutableArray *_viewedReactions;
+    long long _currentReactionIndex;
     NSMutableArray *_loadedReactions;
     BMReactionItemModel *_currentReaction;
-    BMReactionContentViewController *_contentController;
     UIButton *_dismissButton;
+    UIImageView *_reactionImageView;
+    UIImageView *_thumbnailImageView;
     BMPlayerInfoLabelView *_detailLabelView;
     UILabel *_endOfReactionsLabel;
     UIImageView *_bemeLabelImageView;
@@ -33,11 +35,13 @@
 @property(retain, nonatomic) UIImageView *bemeLabelImageView; // @synthesize bemeLabelImageView=_bemeLabelImageView;
 @property(retain, nonatomic) UILabel *endOfReactionsLabel; // @synthesize endOfReactionsLabel=_endOfReactionsLabel;
 @property(retain, nonatomic) BMPlayerInfoLabelView *detailLabelView; // @synthesize detailLabelView=_detailLabelView;
+@property(retain, nonatomic) UIImageView *thumbnailImageView; // @synthesize thumbnailImageView=_thumbnailImageView;
+@property(retain, nonatomic) UIImageView *reactionImageView; // @synthesize reactionImageView=_reactionImageView;
 @property(retain, nonatomic) UIButton *dismissButton; // @synthesize dismissButton=_dismissButton;
-@property(retain, nonatomic) BMReactionContentViewController *contentController; // @synthesize contentController=_contentController;
 @property(retain, nonatomic) BMReactionItemModel *currentReaction; // @synthesize currentReaction=_currentReaction;
 @property(retain, nonatomic) NSMutableArray *loadedReactions; // @synthesize loadedReactions=_loadedReactions;
 @property(nonatomic) _Bool endOfReactions; // @synthesize endOfReactions=_endOfReactions;
+@property(nonatomic) long long currentReactionIndex; // @synthesize currentReactionIndex=_currentReactionIndex;
 @property(nonatomic, getter=isLoadingReactions) _Bool loadingReactions; // @synthesize loadingReactions=_loadingReactions;
 @property(nonatomic) _Bool hadReportEvent; // @synthesize hadReportEvent=_hadReportEvent;
 @property(retain, nonatomic) NSMutableArray *viewedReactions; // @synthesize viewedReactions=_viewedReactions;
@@ -52,14 +56,17 @@
 - (void)reportWasSelected:(id)arg1;
 - (void)reactionViewDidReceiveGesture:(id)arg1;
 - (void)dismissButtonWasSelected:(id)arg1;
-- (void)displayEOF;
+- (void)reset;
+- (void)displayEndOfReactions;
 - (void)displayLoading;
+- (void)displayReaction;
 - (void)updateDisplay;
 - (void)displayNextReaction;
 - (void)flagReactionAsViewed:(id)arg1;
-- (void)startPreloadingReactions;
+- (void)prefetchReactions;
 - (void)defineLayout;
 - (void)setupSubviews;
+- (void)viewWillDisappear:(_Bool)arg1;
 - (void)viewDidAppear:(_Bool)arg1;
 - (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;

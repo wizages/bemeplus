@@ -10,6 +10,7 @@
 
 @interface BMRecentNameRetriever : NSObject
 {
+    _Bool _running;
     id <BMRecentNameReceiverDelegate> _delegate;
     NSArray *_fetchedUsers;
     NSTimer *_dataSendingTimer;
@@ -17,6 +18,7 @@
 }
 
 + (id)retrieverWithDelegate:(id)arg1;
+@property(nonatomic) _Bool running; // @synthesize running=_running;
 @property(nonatomic) unsigned long long dataIndex; // @synthesize dataIndex=_dataIndex;
 @property(retain, nonatomic) NSTimer *dataSendingTimer; // @synthesize dataSendingTimer=_dataSendingTimer;
 @property(copy, nonatomic) NSArray *fetchedUsers; // @synthesize fetchedUsers=_fetchedUsers;

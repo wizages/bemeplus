@@ -14,8 +14,9 @@
     CDUnknownBlockType _successFailureBlock;
 }
 
++ (id)name;
 @property(copy, nonatomic) CDUnknownBlockType successFailureBlock; // @synthesize successFailureBlock=_successFailureBlock;
-@property(readonly, copy, nonatomic) CDUnknownBlockType didStartBlock; // @synthesize didStartBlock=_didStartBlock;
+@property(copy, nonatomic) CDUnknownBlockType didStartBlock; // @synthesize didStartBlock=_didStartBlock;
 @property(nonatomic) unsigned long long exitState; // @synthesize exitState=_exitState;
 @property(copy, nonatomic) id <BMClipProtocol> clip; // @synthesize clip=_clip;
 - (void).cxx_destruct;

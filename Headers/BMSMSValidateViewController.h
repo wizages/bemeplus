@@ -8,41 +8,42 @@
 
 #import "UITextFieldDelegate.h"
 
-@class MASConstraint, NSString, UIActivityIndicatorView, UIButton, UILabel, UITextField, UIView;
+@class BMButton, NSString, NSTimer, UIActivityIndicatorView, UIButton, UILabel, UITextField, UIView;
 
 @interface BMSMSValidateViewController : BMViewController <UITextFieldDelegate>
 {
+    _Bool _shouldDisplayModalCloseButton;
+    NSString *_username;
     UIView *_containerView;
     UIView *_topView;
-    UIView *_bottomView;
-    MASConstraint *_containerBottomConstraint;
     UILabel *_topLabel;
     UIView *_numberContainerView;
     UITextField *_numberInputField;
     UIButton *_submitButton;
     UIButton *_restartButton;
     UIActivityIndicatorView *_loadingIndicator;
-    UIView *_bottomPolicyView;
-    UIView *_bottomPolicyViewContainer;
+    NSTimer *_displaySupportTimer;
+    BMButton *_contactSupportButton;
 }
 
-@property(retain, nonatomic) UIView *bottomPolicyViewContainer; // @synthesize bottomPolicyViewContainer=_bottomPolicyViewContainer;
-@property(retain, nonatomic) UIView *bottomPolicyView; // @synthesize bottomPolicyView=_bottomPolicyView;
+@property(retain, nonatomic) BMButton *contactSupportButton; // @synthesize contactSupportButton=_contactSupportButton;
+@property(retain, nonatomic) NSTimer *displaySupportTimer; // @synthesize displaySupportTimer=_displaySupportTimer;
 @property(retain, nonatomic) UIActivityIndicatorView *loadingIndicator; // @synthesize loadingIndicator=_loadingIndicator;
 @property(retain, nonatomic) UIButton *restartButton; // @synthesize restartButton=_restartButton;
 @property(retain, nonatomic) UIButton *submitButton; // @synthesize submitButton=_submitButton;
 @property(retain, nonatomic) UITextField *numberInputField; // @synthesize numberInputField=_numberInputField;
 @property(retain, nonatomic) UIView *numberContainerView; // @synthesize numberContainerView=_numberContainerView;
 @property(retain, nonatomic) UILabel *topLabel; // @synthesize topLabel=_topLabel;
-@property(retain, nonatomic) MASConstraint *containerBottomConstraint; // @synthesize containerBottomConstraint=_containerBottomConstraint;
-@property(retain, nonatomic) UIView *bottomView; // @synthesize bottomView=_bottomView;
 @property(retain, nonatomic) UIView *topView; // @synthesize topView=_topView;
 @property(retain, nonatomic) UIView *containerView; // @synthesize containerView=_containerView;
+@property(nonatomic) _Bool shouldDisplayModalCloseButton; // @synthesize shouldDisplayModalCloseButton=_shouldDisplayModalCloseButton;
+@property(retain, nonatomic) NSString *username; // @synthesize username=_username;
 - (void).cxx_destruct;
 - (_Bool)textField:(id)arg1 shouldChangeCharactersInRange:(struct _NSRange)arg2 replacementString:(id)arg3;
 - (_Bool)textFieldShouldReturn:(id)arg1;
 - (void)textFieldDidChange;
-- (void)keyboardWillChangeFrame:(id)arg1;
+- (void)openEmailWithSupportTag:(id)arg1;
+- (void)contactSupport;
 - (void)resetLogin;
 - (void)submit;
 - (void)defineLayout;
@@ -51,6 +52,9 @@
 - (void)viewDidAppear:(_Bool)arg1;
 - (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;
+- (void)dealloc;
+- (id)initWithModalCloseButton:(_Bool)arg1;
+- (id)initWithNibName:(id)arg1 bundle:(id)arg2;
 
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;

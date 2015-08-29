@@ -6,35 +6,31 @@
 
 #import "BMViewController.h"
 
-#import "BMFeedStatsViewDelegate.h"
+@class BMMainTopViewModel, UIButton, UILabel;
 
-@class BMFeedStatsView, NSString;
-
-@interface BMMainTopViewController : BMViewController <BMFeedStatsViewDelegate>
+@interface BMMainTopViewController : BMViewController
 {
     id <BMMainTopViewControllerDelegate> _delegate;
-    BMFeedStatsView *_statsView;
+    BMMainTopViewModel *_viewModel;
+    UIButton *_mainButton;
+    UILabel *_infoLabel;
+    UIButton *_reactionsButton;
+    UIButton *_settingsButton;
 }
 
-@property(retain, nonatomic) BMFeedStatsView *statsView; // @synthesize statsView=_statsView;
+@property(retain, nonatomic) UIButton *settingsButton; // @synthesize settingsButton=_settingsButton;
+@property(retain, nonatomic) UIButton *reactionsButton; // @synthesize reactionsButton=_reactionsButton;
+@property(retain, nonatomic) UILabel *infoLabel; // @synthesize infoLabel=_infoLabel;
+@property(retain, nonatomic) UIButton *mainButton; // @synthesize mainButton=_mainButton;
+@property(retain, nonatomic) BMMainTopViewModel *viewModel; // @synthesize viewModel=_viewModel;
 @property(nonatomic) __weak id <BMMainTopViewControllerDelegate> delegate; // @synthesize delegate=_delegate;
 - (void).cxx_destruct;
 - (void)settingsButtonWasSelected:(id)arg1;
-- (void)unlockButtonWasSelected:(id)arg1;
 - (void)reactionsButtonWasSelected:(id)arg1;
-- (void)removeNotifications;
-- (void)addNotifications;
+- (void)mainButtonWasSelected:(id)arg1;
 - (void)defineLayout;
 - (void)setupSubviews;
-- (void)viewWillDisappear:(_Bool)arg1;
-- (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;
-
-// Remaining properties
-@property(readonly, copy) NSString *debugDescription;
-@property(readonly, copy) NSString *description;
-@property(readonly) unsigned long long hash;
-@property(readonly) Class superclass;
 
 @end
 

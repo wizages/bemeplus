@@ -28,7 +28,7 @@
 @property(nonatomic) __weak id <BMContactImporterDelegate> delegate; // @synthesize delegate=_delegate;
 - (void).cxx_destruct;
 - (void)normalizationOfContactsComplete;
-- (void)normalizeContactPhoneNumbers:(id)arg1;
+- (void)normalizePhoneNumbersForContactDictionary:(id)arg1;
 - (void)normalizeAllContacts;
 - (void)loadContacts;
 - (void)reset;

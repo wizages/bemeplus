@@ -6,40 +6,56 @@
 
 #import "LLDBBase.h"
 
-#import "LLDownloaderDataDestination.h"
+#import "LLFrequencyCappingDB.h"
 
 @class NSString;
 
-@interface LLMarketingDB : LLDBBase <LLDownloaderDataDestination>
+@interface LLMarketingDB : LLDBBase <LLFrequencyCappingDB>
 {
 }
 
++ (long long)startOfDaySecondsFromTimeString:(id)arg1;
++ (_Bool)initializeFrequencyCappingTables:(id)arg1;
+- (id)getAllCampaignIdsWithIgnoreGlobal:(_Bool)arg1 eligibleCampaigns:(id)arg2;
+- (long long)countFrom:(id)arg1;
+- (id)getGloballyDisqualifiedCampaignsBy:(long long)arg1 eligibleCampaigns:(id)arg2;
+- (id)campaignIdSetFrom:(id)arg1;
+- (id)executeCampaignIdQueries:(id)arg1;
+- (id)getDisqualifiedCampaignsBy:(long long)arg1 eligibleCampaigns:(id)arg2;
+- (id)getIgnoresGlobalCampaignsFromEligibleCampaigns:(id)arg1;
+- (_Bool)deleteFrequencyCappingRules:(id)arg1;
+- (_Bool)deleteGlobalFrequencyCappingRule;
+- (_Bool)parseBlackoutTimes:(id)arg1 withFreqCapId:(id)arg2 andRuleGroup:(id)arg3;
+- (_Bool)parseBlackoutWeekdays:(id)arg1 withFreqCapId:(id)arg2 andRuleGroup:(id)arg3;
+- (_Bool)parseBlackoutDates:(id)arg1 withFreqCapId:(id)arg2 andRuleGroup:(id)arg3;
+- (id)augmentBlackoutRule:(id)arg1;
+- (_Bool)parseBlackoutRules:(id)arg1 withFreqCapId:(id)arg2;
+- (_Bool)parseDisplayFreq:(id)arg1 withFreqCapId:(id)arg2;
+- (_Bool)parseFreqCapRule:(id)arg1 withCampaignId:(id)arg2;
+- (_Bool)storeFrequencyCappingRule:(id)arg1 forCampaignId:(id)arg2;
 - (void)removeCampaignZipForRuleId:(long long)arg1;
 - (void)removeOldCampaigns:(id)arg1;
-- (void)saveInAppMarketingMessage:(id)arg1;
-- (void)saveInAppMarketingData:(id)arg1;
-- (void)downloadDidCompleteWithResponseData:(id)arg1;
-- (_Bool)dropDatabase;
+- (long long)saveInAppMarketingMessage:(id)arg1 withConfigData:(id)arg2;
 - (long long)campaignIdFrom:(id)arg1;
 - (_Bool)deleteAMPRuleIds:(id)arg1 fromTable:(id)arg2;
 - (_Bool)deleteAMPRuleIds:(id)arg1;
-- (id)campaignIdToCampaignTupleTable;
+- (id)campaignIdToRuleIdTable;
 - (void)saveAMPConditions:(id)arg1 forCampaignId:(unsigned long long)arg2;
 - (_Bool)saveAMPConditionValues:(id)arg1 forConditionId:(unsigned long long)arg2;
 - (void)saveAMPCondition:(id)arg1 forRuleId:(unsigned long long)arg2;
 - (id)conditionsForRuleId:(unsigned long long)arg1;
-- (_Bool)setDidDisplayForAMPRuleId:(long long)arg1;
+- (_Bool)setDidDisplayForCampaignId:(long long)arg1;
 - (id)fetchAMPRules;
 - (id)retrieveMessageForResultSet:(id)arg1;
 - (id)fetchAMPRulesForEvent:(id)arg1;
 - (id)fetchAMPRulesForRuleId:(unsigned long long)arg1;
 - (void)saveAMPEventName:(id)arg1 toRuleId:(long long)arg2;
-- (long long)saveAMPMessage:(id)arg1;
+- (long long)saveAMPMessage:(id)arg1 withConfigData:(id)arg2;
 - (id)ruleTupleWithCampaignId:(unsigned long long)arg1;
 - (long long)ruleIdWithCampaignId:(unsigned long long)arg1;
 - (void)migrateFromV2Database:(id)arg1;
 - (_Bool)initializeDatabase:(id)arg1;
-- (id)initWithLocalyticsDelegate:(id)arg1;
+- (id)initWithLocalyticsDelegate:(id)arg1 databasePath:(id)arg2;
 - (id)migrations;
 
 // Remaining properties

@@ -10,6 +10,7 @@
 {
 }
 
++ (id)name;
 - (void)updateServerState;
 - (void)performOperation;
 - (id)init;

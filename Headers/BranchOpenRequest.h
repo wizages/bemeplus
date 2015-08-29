@@ -8,17 +8,17 @@
 
 @interface BranchOpenRequest : BNCServerRequest
 {
-    _Bool _allowInstallParamsToBeCleared;
+    _Bool _isInstall;
     CDUnknownBlockType _callback;
 }
 
-@property(nonatomic) _Bool allowInstallParamsToBeCleared; // @synthesize allowInstallParamsToBeCleared=_allowInstallParamsToBeCleared;
+@property(nonatomic) _Bool isInstall; // @synthesize isInstall=_isInstall;
 @property(copy, nonatomic) CDUnknownBlockType callback; // @synthesize callback=_callback;
 - (void).cxx_destruct;
 - (void)processResponse:(id)arg1 error:(id)arg2;
 - (void)safeSetValue:(id)arg1 forKey:(id)arg2 onDict:(id)arg3;
 - (void)makeRequest:(id)arg1 key:(id)arg2 callback:(CDUnknownBlockType)arg3;
-- (id)initWithCallback:(CDUnknownBlockType)arg1 allowInstallParamsToBeCleared:(_Bool)arg2;
+- (id)initWithCallback:(CDUnknownBlockType)arg1 isInstall:(_Bool)arg2;
 - (id)initWithCallback:(CDUnknownBlockType)arg1;
 
 @end

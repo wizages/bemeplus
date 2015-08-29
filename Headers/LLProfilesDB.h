@@ -18,7 +18,6 @@
 - (id)getUploadDataWithMaxId:(unsigned long long)arg1;
 - (void)fullUploadDidFinish;
 - (void)uploadBatchDidCompleteWithHighestUploadNumber:(unsigned long long)arg1;
-- (_Bool)dropDatabase;
 - (long long)profileEventCount;
 - (_Bool)deleteProfileEventTuple:(id)arg1;
 - (id)getNextProfileEventTuples:(unsigned long long)arg1;
@@ -26,7 +25,7 @@
 - (_Bool)queueProfileEventTuple:(id)arg1;
 - (void)migrateFromV2Database:(id)arg1;
 - (_Bool)initializeDatabase:(id)arg1;
-- (id)initWithLocalyticsDelegate:(id)arg1;
+- (id)initWithLocalyticsDelegate:(id)arg1 databasePath:(id)arg2;
 - (id)migrations;
 
 // Remaining properties

@@ -10,7 +10,6 @@
 
 @interface LLMarketingTuple : NSObject
 {
-    _Bool _didDisplay;
     _Bool _internet_required;
     unsigned long long _ruleId;
     unsigned long long _campaignId;
@@ -33,15 +32,16 @@
     NSString *_location;
     NSString *_ab_test;
     NSString *_devices;
+    long long _controlGroup;
 }
 
 + (_Bool)validMarketingMessage:(id)arg1 testModeEnabled:(_Bool)arg2;
+@property(nonatomic) long long controlGroup; // @synthesize controlGroup=_controlGroup;
 @property(copy, nonatomic) NSString *devices; // @synthesize devices=_devices;
 @property(copy, nonatomic) NSString *ab_test; // @synthesize ab_test=_ab_test;
 @property(copy, nonatomic) NSString *location; // @synthesize location=_location;
 @property(nonatomic) _Bool internet_required; // @synthesize internet_required=_internet_required;
 @property(nonatomic) long long times_to_display; // @synthesize times_to_display=_times_to_display;
-@property(nonatomic) _Bool didDisplay; // @synthesize didDisplay=_didDisplay;
 @property(nonatomic) long long displaySession; // @synthesize displaySession=_displaySession;
 @property(nonatomic) long long displaySeconds; // @synthesize displaySeconds=_displaySeconds;
 @property(nonatomic) unsigned long long updateOnTTLExpiration; // @synthesize updateOnTTLExpiration=_updateOnTTLExpiration;

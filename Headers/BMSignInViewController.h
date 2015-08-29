@@ -48,7 +48,7 @@
 @property(retain, nonatomic) UITextField *textFieldNumber; // @synthesize textFieldNumber=_textFieldNumber;
 @property(retain, nonatomic) UITextField *usernameField; // @synthesize usernameField=_usernameField;
 - (void).cxx_destruct;
-- (void)requestValidationCode;
+- (void)requestValidationCodeForUserWithName:(id)arg1;
 - (_Bool)textField:(id)arg1 shouldChangeCharactersInRange:(struct _NSRange)arg2 replacementString:(id)arg3;
 - (_Bool)textFieldShouldReturn:(id)arg1;
 - (void)textFieldDidChange;
@@ -57,6 +57,8 @@
 - (void)resetLogin;
 - (void)requestValidationWithNumber:(id)arg1;
 - (_Bool)hasValidPhoneNumber;
+- (void)enableForm;
+- (void)disableForm;
 - (void)submit;
 - (void)defineLayout;
 - (void)setupSubview;

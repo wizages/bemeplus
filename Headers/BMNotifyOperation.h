@@ -10,7 +10,7 @@
 {
 }
 
-- (void)updateClipFromClip:(id)arg1;
++ (id)name;
 - (void)performOperation;
 - (id)init;
 

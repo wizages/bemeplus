@@ -6,7 +6,7 @@
 
 #import "NSObject.h"
 
-@class BMTouchesContainer, NSSet, UIEvent, UITouch;
+@class NSSet, UIEvent, UITouch;
 
 @protocol BMTouchesContainerDelegate <NSObject>
 
@@ -17,7 +17,5 @@
 - (void)touchesEnded:(NSSet *)arg1 withEvent:(UIEvent *)arg2;
 - (void)touchesMoved:(NSSet *)arg1 withEvent:(UIEvent *)arg2;
 - (void)touchesBegan:(NSSet *)arg1 withEvent:(UIEvent *)arg2;
-- (void)container:(BMTouchesContainer *)arg1 touchingEndedWithTouch:(UITouch *)arg2;
-- (void)container:(BMTouchesContainer *)arg1 touchingBeganWithTouch:(UITouch *)arg2;
 @end
 

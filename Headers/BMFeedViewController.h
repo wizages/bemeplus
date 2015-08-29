@@ -7,20 +7,17 @@
 #import "BMViewController.h"
 
 #import "BMFeedFooterViewDelegate.h"
-#import "BMGoProViewDelegate.h"
 #import "BMPermissionRequestDelegate.h"
 #import "BMPlayerViewControllerDelegate.h"
 #import "UIGestureRecognizerDelegate.h"
 #import "UITableViewDelegate.h"
 
-@class BMFeedCell, BMFeedDataSourceController, BMGoProView, BMStackModel, NSDate, NSDictionary, NSIndexPath, NSString, NSTimer, UITableView, UIView;
+@class BMFeedCell, BMFeedDataSourceController, BMStackModel, NSDate, NSDictionary, NSIndexPath, NSString, NSTimer, UITableView, UIView;
 
-@interface BMFeedViewController : BMViewController <UITableViewDelegate, BMPlayerViewControllerDelegate, BMGoProViewDelegate, BMFeedFooterViewDelegate, BMPermissionRequestDelegate, UIGestureRecognizerDelegate>
+@interface BMFeedViewController : BMViewController <UITableViewDelegate, BMPlayerViewControllerDelegate, BMFeedFooterViewDelegate, BMPermissionRequestDelegate, UIGestureRecognizerDelegate>
 {
-    _Bool _isGoProAvailable;
     id <BMFeedViewControllerDelegate> _delegate;
     UITableView *_tableView;
-    BMGoProView *_goProView;
     BMFeedCell *_lastTouchedCell;
     UIView *_footerView;
     BMFeedDataSourceController *_feedDataSourceController;
@@ -41,7 +38,6 @@
 @property(retain, nonatomic) BMFeedDataSourceController *feedDataSourceController; // @synthesize feedDataSourceController=_feedDataSourceController;
 @property(retain, nonatomic) UIView *footerView; // @synthesize footerView=_footerView;
 @property(nonatomic) __weak BMFeedCell *lastTouchedCell; // @synthesize lastTouchedCell=_lastTouchedCell;
-@property(retain, nonatomic) BMGoProView *goProView; // @synthesize goProView=_goProView;
 @property(retain, nonatomic) UITableView *tableView; // @synthesize tableView=_tableView;
 @property(nonatomic) __weak id <BMFeedViewControllerDelegate> delegate; // @synthesize delegate=_delegate;
 - (void).cxx_destruct;
@@ -54,19 +50,11 @@
 - (void)touchesEnded:(id)arg1 withEvent:(id)arg2;
 - (void)touchesMoved:(id)arg1 withEvent:(id)arg2;
 - (void)touchesBegan:(id)arg1 withEvent:(id)arg2;
-- (void)showGoProMenu;
-- (void)hideGoProMenu;
-- (void)dismissGoProUI;
-- (void)goProNOTAvailable:(id)arg1;
-- (void)goProAvailable:(id)arg1;
-- (void)captureComplete:(id)arg1;
-- (void)goProStateDidChange:(id)arg1;
 - (void)removeNotifications;
 - (void)addNotifications;
 - (void)playerViewControllerPlaybackDidEndWithReportRequest:(id)arg1;
 - (void)playerViewControllerPlaybackFailed:(id)arg1;
 - (void)playerViewControllerPlaybackDidEnd:(id)arg1;
-- (void)showSMSNag;
 - (void)showTutorial;
 - (void)dismissNaggingCells;
 - (void)dismissedPlayerCompletionWithTimeWatched:(double)arg1;
@@ -78,9 +66,6 @@
 - (void)scrollViewDidScroll:(id)arg1;
 - (id)tableView:(id)arg1 viewForFooterInSection:(long long)arg2;
 - (double)tableView:(id)arg1 heightForFooterInSection:(long long)arg2;
-- (id)tableView:(id)arg1 viewForHeaderInSection:(long long)arg2;
-- (double)tableView:(id)arg1 heightForHeaderInSection:(long long)arg2;
-- (id)tableView:(id)arg1 titleForHeaderInSection:(long long)arg2;
 - (double)tableView:(id)arg1 heightForRowAtIndexPath:(id)arg2;
 - (void)feedFooterFindFriendsButtonWasSelected:(id)arg1;
 - (void)determineIfFooterEnabled;
@@ -96,11 +81,10 @@
 - (void)handleLongPress:(id)arg1;
 - (void)handleTap:(id)arg1;
 - (void)setupTableView;
-- (void)setup;
 - (void)applicationDidEnterBackground:(id)arg1;
 - (void)applicationDidBecomeActive:(id)arg1;
 - (void)viewWillDisappear:(_Bool)arg1;
-- (void)notifyPermission:(int)arg1 Enabled:(_Bool)arg2;
+- (void)notifyPermissionOfType:(int)arg1 isEnabled:(_Bool)arg2;
 - (void)viewDidAppear:(_Bool)arg1;
 - (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;

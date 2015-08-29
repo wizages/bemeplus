@@ -6,34 +6,61 @@
 
 #import "NSObject.h"
 
-@class NSOperationQueue, PMKPromise;
+#import "BMUploadOperationDelegate.h"
 
-@interface BMDockManager : NSObject
+@class AFNetworkReachabilityManager, BMCleanupOperation, BMClipOperation, BMFinishOperation, BMNotifyOperation, BMTranscoderOperation, BMUploadOperation, NSString, PMKPromise;
+
+@interface BMDockManager : NSObject <BMUploadOperationDelegate>
 {
-    NSOperationQueue *_processingQueue;
-    PMKPromise *_currentOperation;
+    _Bool _announcedProcessing;
+    _Bool _reachabilityPrimed;
+    _Bool _processing;
+    _Bool _active;
+    PMKPromise *_currentDockTask;
+    AFNetworkReachabilityManager *_networkReachabilityManager;
+    BMTranscoderOperation *_transcoderOperation;
+    BMNotifyOperation *_notifyOperation;
+    BMUploadOperation *_uploadOperation;
+    BMFinishOperation *_finishOperation;
+    BMCleanupOperation *_cleanupOperation;
+    BMClipOperation *_currentOperation;
 }
 
-+ (id)performOperation:(id)arg1;
 + (id)sharedInstance;
-@property(retain) PMKPromise *currentOperation; // @synthesize currentOperation=_currentOperation;
-@property(retain, nonatomic) NSOperationQueue *processingQueue; // @synthesize processingQueue=_processingQueue;
+@property(nonatomic) __weak BMClipOperation *currentOperation; // @synthesize currentOperation=_currentOperation;
+@property(retain, nonatomic) BMCleanupOperation *cleanupOperation; // @synthesize cleanupOperation=_cleanupOperation;
+@property(retain, nonatomic) BMFinishOperation *finishOperation; // @synthesize finishOperation=_finishOperation;
+@property(retain, nonatomic) BMUploadOperation *uploadOperation; // @synthesize uploadOperation=_uploadOperation;
+@property(retain, nonatomic) BMNotifyOperation *notifyOperation; // @synthesize notifyOperation=_notifyOperation;
+@property(retain, nonatomic) BMTranscoderOperation *transcoderOperation; // @synthesize transcoderOperation=_transcoderOperation;
+@property(retain, nonatomic) AFNetworkReachabilityManager *networkReachabilityManager; // @synthesize networkReachabilityManager=_networkReachabilityManager;
+@property(retain) PMKPromise *currentDockTask; // @synthesize currentDockTask=_currentDockTask;
+@property(nonatomic, getter=isActive) _Bool active; // @synthesize active=_active;
+@property(nonatomic, getter=isProcessing) _Bool processing; // @synthesize processing=_processing;
+@property(nonatomic) _Bool reachabilityPrimed; // @synthesize reachabilityPrimed=_reachabilityPrimed;
+@property(nonatomic, getter=hasAnnouncedProcessing) _Bool announcedProcessing; // @synthesize announcedProcessing=_announcedProcessing;
 - (void).cxx_destruct;
 - (void)dealloc;
-- (void)monitorReachabilityChanges;
+- (id)init;
 - (id)notificationUserInfoForClip:(id)arg1;
 - (void)postDidCompleteNotificationForOperation:(id)arg1 withClip:(id)arg2 error:(id)arg3;
 - (void)postDidStartNotificationForOperation:(id)arg1 withClip:(id)arg2;
-- (void)observeValueForKeyPath:(id)arg1 ofObject:(id)arg2 change:(id)arg3 context:(void *)arg4;
-- (void)clipNoLongerProcessing;
+- (id)performOperation:(id)arg1;
+- (void)processingComplete;
 - (void)processClip:(id)arg1;
+- (void)uploadProgress:(double)arg1 remainingBytes:(long long)arg2 totalBytes:(long long)arg3 forClip:(id)arg4;
 - (void)announceProcessingComplete;
 - (void)announceProcessing;
 - (void)processRemainingClips;
-- (_Bool)isProcessing;
-- (int)publishClip:(id)arg1;
+- (void)publishClip:(id)arg1;
+- (void)deactivate;
 - (void)activate;
-- (id)init;
+
+// Remaining properties
+@property(readonly, copy) NSString *debugDescription;
+@property(readonly, copy) NSString *description;
+@property(readonly) unsigned long long hash;
+@property(readonly) Class superclass;
 
 @end
 

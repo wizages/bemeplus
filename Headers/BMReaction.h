@@ -6,35 +6,23 @@
 
 #import "NSObject.h"
 
-@class BMNetworkClient, NSArray, NSMapTable, NSMutableSet, NSSet, NSString;
+@class NSArray, NSSet, NSString;
 
 @interface BMReaction : NSObject
 {
-    NSMapTable *targetActionParis;
-    NSSet *selectors;
-    BMNetworkClient *_client;
     NSArray *_dataSource;
     NSSet *_viewedReactions;
-    NSString *_dataSourceCacheInvalidContext;
-    NSMutableSet *_targetActions;
+    NSString *_dataSourceCacheInvalidationContext;
 }
 
-@property(retain, nonatomic) NSMutableSet *targetActions; // @synthesize targetActions=_targetActions;
-@property(retain, nonatomic) NSString *dataSourceCacheInvalidContext; // @synthesize dataSourceCacheInvalidContext=_dataSourceCacheInvalidContext;
+@property(retain, nonatomic) NSString *dataSourceCacheInvalidationContext; // @synthesize dataSourceCacheInvalidationContext=_dataSourceCacheInvalidationContext;
 @property(retain, nonatomic) NSSet *viewedReactions; // @synthesize viewedReactions=_viewedReactions;
 @property(retain, nonatomic) NSArray *dataSource; // @synthesize dataSource=_dataSource;
-@property(retain, nonatomic) BMNetworkClient *client; // @synthesize client=_client;
 - (void).cxx_destruct;
-- (id)reactionStatsString;
 - (void)addViewedItems:(id)arg1;
-- (long long)count;
-- (unsigned long long)indexForReactionItem:(id)arg1;
-- (id)reactionItemAtRow:(long long)arg1;
 - (id)allItems;
 - (id)refresh;
-- (void)notifyTargets;
-- (void)removeUpdateTarget:(id)arg1;
-- (void)addUpdateTarget:(id)arg1 action:(SEL)arg2;
+- (void)updateCurrentUsersReactionCount;
 - (id)init;
 
 @end

@@ -6,7 +6,7 @@
 
 #import "NSValueTransformer.h"
 
-@interface NSValueTransformer (BeMe)
+@interface NSValueTransformer (Beme)
 + (id)beme_reversibleDateValueTransformer;
 @end
 

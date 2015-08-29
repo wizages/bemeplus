@@ -28,8 +28,8 @@
     NSString *_sessionParams;
     NSString *_installParams;
     long long _retryCount;
-    long long _retryInterval;
-    long long _timeout;
+    double _retryInterval;
+    double _timeout;
     NSMutableDictionary *_persistenceDict;
     NSMutableDictionary *_countsDictionary;
     NSMutableDictionary *_creditsDictionary;
@@ -42,8 +42,8 @@
 @property(retain, nonatomic) NSMutableDictionary *countsDictionary; // @synthesize countsDictionary=_countsDictionary;
 @property(retain, nonatomic) NSMutableDictionary *persistenceDict; // @synthesize persistenceDict=_persistenceDict;
 @property(nonatomic) _Bool explicitlyRequestedReferrable; // @synthesize explicitlyRequestedReferrable=_explicitlyRequestedReferrable;
-@property(nonatomic) long long timeout; // @synthesize timeout=_timeout;
-@property(nonatomic) long long retryInterval; // @synthesize retryInterval=_retryInterval;
+@property(nonatomic) double timeout; // @synthesize timeout=_timeout;
+@property(nonatomic) double retryInterval; // @synthesize retryInterval=_retryInterval;
 @property(nonatomic) long long retryCount; // @synthesize retryCount=_retryCount;
 @property(nonatomic) _Bool isConnectedToRemoteDebug; // @synthesize isConnectedToRemoteDebug=_isConnectedToRemoteDebug;
 @property(nonatomic) _Bool isDebug; // @synthesize isDebug=_isDebug;
@@ -68,8 +68,6 @@
 - (void)setCreditCount:(long long)arg1 forBucket:(id)arg2;
 - (void)setCreditCount:(long long)arg1;
 - (void)clearUserCreditsAndCounts;
-- (_Bool)getNeedAppListCheck;
-- (void)setAppListCheckDone;
 @property(nonatomic) _Bool isReferrable; // @synthesize isReferrable=_isReferrable;
 - (void)setUserURL:(id)arg1;
 - (id)userURL;

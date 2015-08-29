@@ -21,6 +21,7 @@
 @property(retain, nonatomic) NSMutableArray *queue; // @synthesize queue=_queue;
 - (void).cxx_destruct;
 - (id)queueFile;
+- (id)exceptionString:(id)arg1;
 - (void)retrieve;
 - (void)persistToDisk;
 - (void)persistImmediately;

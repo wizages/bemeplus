@@ -63,7 +63,7 @@
 - (id)installId;
 - (void)migrateFromV2Database:(id)arg1;
 - (_Bool)initializeDatabase:(id)arg1;
-- (id)initWithLocalyticsDelegate:(id)arg1;
+- (id)initWithLocalyticsDelegate:(id)arg1 databasePath:(id)arg2;
 - (id)migrations;
 
 // Remaining properties

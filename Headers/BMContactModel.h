@@ -8,15 +8,17 @@
 
 #import "MTLJSONSerializing.h"
 
-@class BMUserModel;
+@class BMUserModel, NSString;
 
 @interface BMContactModel : MTLModel <MTLJSONSerializing>
 {
     BMUserModel *_user;
+    NSString *_phoneNumber;
 }
 
 + (id)userJSONTransformer;
 + (id)JSONKeyPathsByPropertyKey;
+@property(readonly, nonatomic) NSString *phoneNumber; // @synthesize phoneNumber=_phoneNumber;
 @property(readonly, nonatomic) BMUserModel *user; // @synthesize user=_user;
 - (void).cxx_destruct;
 

@@ -10,16 +10,14 @@
 #import "BMProximityControlDelegate.h"
 #import "CLLocationManagerDelegate.h"
 
-@class BMCaptureFeedbackController, BMGoProManager, BMSystemCameraCaptureSessionController, NSString;
+@class BMCaptureFeedbackController, BMSystemCameraCaptureSessionController, NSString;
 
 @interface BMCaptureSessionManager : NSObject <BMProximityControlDelegate, BMCaptureSessionDelegate, CLLocationManagerDelegate>
 {
     _Bool _disabled;
     _Bool _captureFinished;
     double _progress;
-    unsigned long long _currentCaptureSource;
     BMSystemCameraCaptureSessionController *_localCamera;
-    BMGoProManager *_goProManager;
     id <BMCaptureSessionProtocol> _captureSession;
     BMCaptureFeedbackController *_feedbackController;
     id <BMProximityControl> _proximityControl;
@@ -32,21 +30,16 @@
 @property(retain, nonatomic) id <BMProximityControl> proximityControl; // @synthesize proximityControl=_proximityControl;
 @property(retain, nonatomic) BMCaptureFeedbackController *feedbackController; // @synthesize feedbackController=_feedbackController;
 @property(retain, nonatomic) id <BMCaptureSessionProtocol> captureSession; // @synthesize captureSession=_captureSession;
-@property(retain, nonatomic) BMGoProManager *goProManager; // @synthesize goProManager=_goProManager;
 @property(retain, nonatomic) BMSystemCameraCaptureSessionController *localCamera; // @synthesize localCamera=_localCamera;
-@property(nonatomic) unsigned long long currentCaptureSource; // @synthesize currentCaptureSource=_currentCaptureSource;
 @property(nonatomic, getter=isDisabled) _Bool disabled; // @synthesize disabled=_disabled;
 @property(nonatomic) double progress; // @synthesize progress=_progress;
 - (void).cxx_destruct;
-- (void)postCaptureSourceChanged;
 - (void)postProgressNotificationWithProgress:(id)arg1;
 - (void)postCancelNotification;
 - (void)postFinishedSavingNotificationWithMovieFileURL:(id)arg1;
 - (void)postFinishedRecordingNotification;
 - (void)postDidStartNotification;
 - (void)postWillStartNotification;
-- (void)goProUnavailable:(id)arg1;
-- (void)goProAvailable:(id)arg1;
 - (void)captureSessionUnavailable:(id)arg1;
 - (void)captureSessionAvailable:(id)arg1;
 - (void)captureSessionProgress:(id)arg1 progress:(double)arg2;
@@ -57,9 +50,9 @@
 - (void)fetchCurrentLocation;
 - (void)proximityControlDidDisengage:(id)arg1;
 - (void)proximityControlDidEngage:(id)arg1;
+- (void)setupCaptureSession;
 - (void)cancelCapture;
 - (void)startCapture;
-- (void)setCaptureSource:(unsigned long long)arg1;
 - (void)dealloc;
 - (id)init;
 

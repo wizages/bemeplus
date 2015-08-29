@@ -11,6 +11,14 @@
 @interface UIView (MASAdditions)
 - (id)mas_closestCommonSuperview:(id)arg1;
 @property(retain, nonatomic) id mas_key;
+@property(readonly, nonatomic) MASViewAttribute *mas_centerYWithinMargins;
+@property(readonly, nonatomic) MASViewAttribute *mas_centerXWithinMargins;
+@property(readonly, nonatomic) MASViewAttribute *mas_trailingMargin;
+@property(readonly, nonatomic) MASViewAttribute *mas_leadingMargin;
+@property(readonly, nonatomic) MASViewAttribute *mas_bottomMargin;
+@property(readonly, nonatomic) MASViewAttribute *mas_topMargin;
+@property(readonly, nonatomic) MASViewAttribute *mas_rightMargin;
+@property(readonly, nonatomic) MASViewAttribute *mas_leftMargin;
 @property(readonly, nonatomic) CDUnknownBlockType mas_attribute;
 @property(readonly, nonatomic) MASViewAttribute *mas_baseline;
 @property(readonly, nonatomic) MASViewAttribute *mas_centerY;

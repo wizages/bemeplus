@@ -6,7 +6,12 @@
 
 #import "UIColor.h"
 
-@interface UIColor (BeMe)
+@interface UIColor (Beme)
++ (id)beme_buttonDisabledDark;
++ (id)beme_buttonHighlightedDark;
++ (id)beme_buttonNormalDark;
++ (id)beme_buttonDisabledLight;
++ (id)beme_buttonHighlightedLight;
 + (id)beme_greenColor;
 + (id)beme_blueColor;
 + (id)beme_dark_redColor;

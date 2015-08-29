@@ -10,10 +10,9 @@
 {
 }
 
-+ (id)uniqueID;
-- (void)performRetrivalSorting:(id)arg1;
-- (id)performDBOperation:(unsigned long long)arg1 clip:(id)arg2 withDB:(id)arg3;
-- (id)retreiveAllwithDB:(id)arg1;
+- (void)performRetrievalSorting:(id)arg1;
+- (id)performDatabaseOperation:(unsigned long long)arg1 clip:(id)arg2 withDB:(id)arg3;
+- (id)retrieveAllWithDB:(id)arg1;
 - (void)delete:(id)arg1 withDB:(id)arg2;
 - (void)update:(id)arg1 withDB:(id)arg2;
 - (void)add:(id)arg1 withDB:(id)arg2;

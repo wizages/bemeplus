@@ -12,11 +12,13 @@
 {
     id <BMReportActionDelegate> _delegate;
     BMUserModel *_user;
+    id _contentToReport;
     UIView *_sourceView;
 }
 
-+ (id)showReportSheetWithUser:(id)arg1 fromView:(id)arg2 delegate:(id)arg3;
++ (id)showReportSheetWithUser:(id)arg1 contentToReport:(id)arg2 fromView:(id)arg3 delegate:(id)arg4;
 @property(nonatomic) __weak UIView *sourceView; // @synthesize sourceView=_sourceView;
+@property(nonatomic) __weak id contentToReport; // @synthesize contentToReport=_contentToReport;
 @property(nonatomic) __weak BMUserModel *user; // @synthesize user=_user;
 @property(nonatomic) __weak id <BMReportActionDelegate> delegate; // @synthesize delegate=_delegate;
 - (void).cxx_destruct;

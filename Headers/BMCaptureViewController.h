@@ -25,10 +25,12 @@
 - (void)animationDidStop:(id)arg1 finished:(_Bool)arg2;
 - (void)circleDown;
 - (void)circleUp:(_Bool)arg1;
+- (void)applicationDidEnterBackground:(id)arg1;
+- (void)cancelAndDismiss;
 - (void)proximityDidDisengage;
 - (void)finishedCapture;
 - (void)canceledCapture;
-- (void)dismissAnimated:(_Bool)arg1;
+- (void)viewWillDisappear:(_Bool)arg1;
 - (void)viewWillAppear:(_Bool)arg1;
 - (void)viewDidLoad;
 

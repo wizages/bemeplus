@@ -9,6 +9,6 @@
 @protocol BMPermissionRequestDelegate <NSObject>
 
 @optional
-- (void)notifyPermission:(int)arg1 Enabled:(_Bool)arg2;
+- (void)notifyPermissionOfType:(int)arg1 isEnabled:(_Bool)arg2;
 @end
 

@@ -21,6 +21,7 @@
 @property(retain, nonatomic) NSHashTable *delegates; // @synthesize delegates=_delegates;
 @property(retain, nonatomic) NSObject<OS_dispatch_queue> *queue; // @synthesize queue=_queue;
 - (void).cxx_destruct;
+- (id)databasePathForName:(id)arg1 directoryPath:(id)arg2;
 - (_Bool)onManagerQueue;
 - (void)callDelegatesWithBlock:(CDUnknownBlockType)arg1;
 - (void)syncExecuteBlock:(CDUnknownBlockType)arg1;

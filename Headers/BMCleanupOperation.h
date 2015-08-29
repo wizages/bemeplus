@@ -10,6 +10,8 @@
 {
 }
 
++ (void)cleanUpClip:(id)arg1 withCompletion:(CDUnknownBlockType)arg2;
++ (id)name;
 - (void)performOperation;
 - (id)init;
 

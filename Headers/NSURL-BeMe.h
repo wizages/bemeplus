@@ -6,35 +6,26 @@
 
 #import "NSURL.h"
 
-@interface NSURL (BeMe)
-+ (id)jpgExtension;
-+ (id)mp4Extension;
-+ (id)movExtension;
-+ (id)uniqueFileNameWithExtension:(id)arg1;
-+ (id)uniqueFileURLAtFileDirectoryURL:(id)arg1 withFileName:(id)arg2;
-+ (id)urlForFileInDirectory:(id)arg1 withFileName:(id)arg2;
-+ (id)urlForFileInImageCachesDirectoryWithFileName:(id)arg1;
-+ (id)urlForFileInVideoCachesDirectoryWithFileName:(id)arg1;
-+ (id)urlForFileInVideoTempDirectoryWithFileName:(id)arg1;
-+ (id)imageSubPath;
-+ (id)videoSubPath;
-+ (_Bool)confirmPathOrCreate:(id)arg1;
-+ (_Bool)cleanDirectoryPathURL:(id)arg1;
-+ (id)supportDirectoryForURLAtSubpath:(id)arg1;
-+ (id)supportDirectoryForImageURL;
-+ (id)supportDirectoryForVideoURL;
-+ (id)tempDirectoryForImageURL;
-+ (id)tempDirectoryForVideoURL;
-+ (id)uniqueURLWithJPGExtension;
-+ (id)uniqueFileNameWithJPGExtension;
-+ (id)uniqueURLWithMP4Extension;
-+ (id)uniqueFileNameWithMP4Extension;
-+ (id)uniqueURLWithMOVExtension;
-+ (id)uniqueFileNameWithMOVExtension;
-+ (void)cleanCachesDirectoryForVideo;
-+ (void)cleanTempDirectoryForVideo;
-+ (_Bool)isURLactualFile:(id)arg1;
-+ (id)URLForBeMeImageWithFileName:(id)arg1;
-+ (id)URLForBeMeVideoWithFileName:(id)arg1;
+@interface NSURL (Beme)
++ (id)_beme_uniqueFileNameWithExtension:(id)arg1;
++ (id)_beme_uniqueFileURLAtFileDirectoryURL:(id)arg1 withFileName:(id)arg2;
++ (id)_beme_urlForFileInDirectory:(id)arg1 withFileName:(id)arg2;
++ (id)_beme_urlForFileInVideoCachesDirectoryWithFileName:(id)arg1;
++ (id)_beme_imageSubPath;
++ (id)_beme_videoSubPath;
++ (_Bool)_beme_confirmPathOrCreate:(id)arg1;
++ (_Bool)_beme_cleanDirectoryPathURL:(id)arg1;
++ (id)_beme_supportDirectoryForURLAtSubpath:(id)arg1;
++ (id)_beme_supportDirectoryForImageURL;
++ (id)beme_supportDirectoryForVideoURL;
++ (id)beme_uniqueURLWithJPGExtension;
++ (id)beme_uniqueFileNameWithJPGExtension;
++ (id)beme_uniqueURLWithMP4Extension;
++ (id)beme_uniqueFileNameWithMP4Extension;
++ (id)beme_uniqueURLWithMOVExtension;
++ (id)beme_uniqueFileNameWithMOVExtension;
++ (void)beme_cleanCachesDirectoryForVideo;
++ (_Bool)_beme_isURLactualFile:(id)arg1;
++ (id)beme_URLForVideoWithFileName:(id)arg1;
 @end
 

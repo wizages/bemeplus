@@ -28,6 +28,14 @@
 - (CDUnknownBlockType)priority;
 - (CDUnknownBlockType)dividedBy;
 - (CDUnknownBlockType)multipliedBy;
+- (id)centerYWithinMargins;
+- (id)centerXWithinMargins;
+- (id)trailingMargin;
+- (id)leadingMargin;
+- (id)bottomMargin;
+- (id)topMargin;
+- (id)rightMargin;
+- (id)leftMargin;
 - (id)baseline;
 - (id)centerY;
 - (id)centerX;

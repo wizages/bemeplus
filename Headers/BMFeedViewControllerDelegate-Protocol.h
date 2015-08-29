@@ -7,7 +7,6 @@
 #import "NSObject.h"
 
 @protocol BMFeedViewControllerDelegate <NSObject>
-- (void)showSMSNag;
 - (void)showTutorial;
 - (void)feedRefreshWasCalled;
 @end

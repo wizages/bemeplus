@@ -6,13 +6,13 @@
 
 #import "UITextField.h"
 
-@interface UITextField (BeMe)
-+ (_Bool)isValidAccessCodeCharacter:(id)arg1;
-+ (_Bool)isValidMobileNumberCharacter:(id)arg1;
-+ (_Bool)isValidUserNameCharacter:(id)arg1;
-+ (_Bool)isValidUserNameCharacters:(id)arg1;
-- (_Bool)validateAcccessCode;
-- (_Bool)validateMobileNumber;
-- (_Bool)validateUserName;
+@interface UITextField (Beme)
++ (_Bool)beme_isValidAccessCodeCharacter:(id)arg1;
++ (_Bool)beme_isValidMobileNumberCharacter:(id)arg1;
++ (_Bool)beme_isValidUserNameCharacter:(id)arg1;
++ (_Bool)beme_isValidUserNameCharacters:(id)arg1;
+- (_Bool)beme_validateAccessCode;
+- (_Bool)beme_validateMobileNumber;
+- (_Bool)beme_validateUserName;
 @end
 

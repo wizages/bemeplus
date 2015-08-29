@@ -6,7 +6,7 @@
 
 #import "NSNotificationCenter.h"
 
-@interface NSNotificationCenter (BeMe)
+@interface NSNotificationCenter (Beme)
 - (void)postNotificationOnMainQueueWithName:(id)arg1 object:(id)arg2 userInfo:(id)arg3;
 @end
 

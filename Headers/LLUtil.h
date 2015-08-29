@@ -10,6 +10,8 @@
 {
 }
 
++ (id)zipFilePathForRuleId:(long long)arg1 fromLocalyticsCacheDirectory:(id)arg2;
++ (id)inAppMsgDataDirectoryFromLocalyticsCacheDirectory:(id)arg1;
 + (void)localyticsLogAssertionFailureInMethod:(SEL)arg1 object:(id)arg2 file:(id)arg3 lineNumber:(unsigned long long)arg4 description:(id)arg5;
 + (id)dictFromJSON:(id)arg1;
 + (id)safeListFromDictionary:(id)arg1 forKey:(id)arg2;
@@ -28,6 +30,8 @@
 + (id)md5HashForFileWithPath:(id)arg1;
 + (id)randomUUID;
 + (id)valueFromQueryStringKey:(id)arg1 url:(id)arg2;
++ (_Bool)inAppAdIdParameterEnabled;
++ (void)setInAppAdIdParameterEnabled:(_Bool)arg1;
 + (_Bool)advertisingIdentifierEnabled;
 + (void)setAdvertisingIdentifierEnabled:(_Bool)arg1;
 + (_Bool)loggingEnabled;

@@ -6,7 +6,7 @@
 
 #import "UITableView.h"
 
-@interface UITableView (BeMe)
-- (void)scrollToBottom;
+@interface UITableView (Beme)
+- (void)beme_scrollToBottom;
 @end
 

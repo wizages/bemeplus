@@ -9,7 +9,7 @@
 @class BMContactImporter, NSArray, NSError;
 
 @protocol BMContactImporterDelegate <NSObject>
-- (void)contactImporter:(BMContactImporter *)arg1 didCompleteWithPhoneNumbers:(NSArray *)arg2;
+- (void)contactImporter:(BMContactImporter *)arg1 didCompleteWithContactsAsDictionaryRepresentations:(NSArray *)arg2;
 - (void)contactImporter:(BMContactImporter *)arg1 failedWithAccessDeniedError:(NSError *)arg2;
 @end
 

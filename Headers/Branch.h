@@ -16,7 +16,6 @@
     _Bool _isInitialized;
     _Bool _shouldCallSessionInitCallback;
     _Bool _shouldAutomaticallyDeepLink;
-    _Bool _appListCheckEnabled;
     BNCServerInterface *_bServerInterface;
     NSTimer *_sessionTimer;
     BNCServerRequestQueue *_requestQueue;
@@ -55,7 +54,6 @@
 @property(retain, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer; // @synthesize debugGestureRecognizer=_debugGestureRecognizer;
 @property(retain, nonatomic) BNCPreferenceHelper *preferenceHelper; // @synthesize preferenceHelper=_preferenceHelper;
 @property(retain, nonatomic) BNCLinkCache *linkCache; // @synthesize linkCache=_linkCache;
-@property(nonatomic) _Bool appListCheckEnabled; // @synthesize appListCheckEnabled=_appListCheckEnabled;
 @property(nonatomic) _Bool shouldAutomaticallyDeepLink; // @synthesize shouldAutomaticallyDeepLink=_shouldAutomaticallyDeepLink;
 @property(nonatomic) _Bool shouldCallSessionInitCallback; // @synthesize shouldCallSessionInitCallback=_shouldCallSessionInitCallback;
 @property(nonatomic) _Bool isInitialized; // @synthesize isInitialized=_isInitialized;
@@ -83,8 +81,6 @@
 - (void)initUserSessionAndCallCallback:(_Bool)arg1;
 - (void)processNextQueueItem;
 - (void)insertRequestAtFront:(id)arg1;
-- (void)processListOfApps:(id)arg1;
-- (void)getAppList;
 - (void)callClose;
 - (void)clearTimer;
 - (void)applicationWillResignActive;
@@ -191,9 +187,9 @@
 - (void)initSessionWithLaunchOptions:(id)arg1;
 - (void)initSessionAndAutomaticallyDisplayDeepLinkController:(_Bool)arg1;
 - (void)initSession;
-- (void)setRetryInterval:(long long)arg1;
+- (void)setRetryInterval:(double)arg1;
 - (void)setMaxRetries:(long long)arg1;
-- (void)setNetworkTimeout:(long long)arg1;
+- (void)setNetworkTimeout:(double)arg1;
 - (_Bool)isUserIdentified;
 - (void)resetUserSession;
 - (void)setDebug;

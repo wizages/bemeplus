@@ -18,10 +18,6 @@
 }
 
 + (id)sharedManager;
-+ (id)buildDate;
-+ (id)buildType;
-+ (id)buildIdentifier;
-+ (id)buildVersion;
 @property(nonatomic, getter=isUpdating) _Bool updating; // @synthesize updating=_updating;
 @property(retain, nonatomic) NSURL *updateURL; // @synthesize updateURL=_updateURL;
 @property(retain, nonatomic) AFHTTPRequestOperationManager *manager; // @synthesize manager=_manager;
