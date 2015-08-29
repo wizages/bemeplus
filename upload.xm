@@ -63,12 +63,19 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 
 - (NSInteger)tableView:(id)arg1 numberOfRowsInSection:(NSInteger)arg2
 {
-	return %orig+1;
+	return %orig;
 }
 
 - (void)setDataSource:(NSArray *)dataSource{
-	NSLog(@"Data source: %@", dataSource);
-	%orig;
+	if ([[dataSource objectAtIndex:0] objectForKey:@"BMPSettings"])
+	{
+		%orig;
+		return;
+	}
+	NSMutableArray *mutableArray = [dataSource mutableCopy];
+	NSAttributedString *titleString = [[NSAttributedString alloc] initWithString:@"Beme+ Settings"];
+	[mutableArray insertObject:@{@"action" : @"bmp_displaySettings", @"title" : titleString, @"BMPSettings" : @(YES)} atIndex:0];
+	%orig(mutableArray);
 }
 
 - (id)tableView:(id)tableView cellForRowAtIndexPath:(NSIndexPath *)arg2 
@@ -91,7 +98,7 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 }
 
 %new
--(void) bemePage {
+-(void)bmp_displaySettings {
 	// UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hello"
 	// 	message:@"Hi nin9tyfour and wizage :)"
 	// 	delegate:nil
@@ -105,6 +112,5 @@ This will upload a clip at the location of /Containers/Data/<MagicalNumber>/Libr
 %end
 
 %ctor{
-	return;
 	%init();
 }
