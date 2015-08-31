@@ -579,11 +579,41 @@ static BOOL version_supported(void){
 }
 
 - (void)itemDidReachEnd:(NSNotification *)notification{
-    AVPlayerItem *item = (AVPlayerItem *)[notification object];
-    BMPlayer *player = (BMPlayer *)[item _player];
-    [player bmp_restartVideo];
+    if (BMPSharedSetting(videosShouldLoop))
+    {
+        AVPlayerItem *item = (AVPlayerItem *)[notification object];
+        BMPlayer *player = (BMPlayer *)[item _player];
+        [player bmp_restartVideo];
+    }else{
+        %orig;
+    }
 }
 
+%end
+
+%hook BMSystemProximityControl
+
+- (void)proximityStateDidChange:(id)arg1{
+    if (BMPSharedSetting(proximityEnabled)){
+        %orig;
+    }
+}
+
+%end
+
+// %hook NSNotificationCenter
+
+// - (void)addObserver:(id)observer selector:(SEL)selector name:(NSString *)name object:(id)object{
+//     NSLog(@"addObserver:(id)%@ selector:(SEL)%@ name:(NSString *)%@ object:(id)%@", observer, NSStringFromSelector(selector), name, object);
+//     %orig;
+// }
+
+// %end
+
+%hook UIDevice
+- (void)setProximityMonitoringEnabled:(BOOL)proximityMonitoringEnabled{
+    %orig(BMPSharedSetting(proximityEnabled));
+}
 %end
 
 %ctor{

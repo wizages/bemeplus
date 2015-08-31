@@ -8,6 +8,7 @@ NSString * const kBMPEnabledKey = @"BMPTweakEnabled";
 NSString * const kBMPLoopVideoKey = @"BMPLoopVideos";
 NSString * const kBMPEnablePasscodeKey = @"BMPEnablePasscode";
 NSString * const kBMPPasscodeValueKey = @"BMPPasscodeValue";
+NSString * const kBMPProximityRecording = @"BMPProximityRecording";
 
 @implementation BMPSettingsManager
 
@@ -53,6 +54,8 @@ NSString * const kBMPPasscodeValueKey = @"BMPPasscodeValue";
 	_tweakIsEnabled = [self boolSettingName:kBMPEnabledKey withDefaultSetting:YES];
 	_videosShouldLoop = [self boolSettingName:kBMPLoopVideoKey withDefaultSetting:YES];
 	_passcodeIsEnabled = [self boolSettingName:kBMPEnablePasscodeKey withDefaultSetting:YES];
+    _proximityEnabled = [self boolSettingName:kBMPProximityRecording withDefaultSetting:YES];
+    
 	_passcodeValue = [self stringSettingName:kBMPPasscodeValueKey withDefaultSetting:nil];
 }
 
@@ -80,6 +83,8 @@ NSString * const kBMPPasscodeValueKey = @"BMPPasscodeValue";
     [[NSUserDefaults standardUserDefaults] setObject:@(_tweakIsEnabled) forKey:kBMPEnabledKey];
     [[NSUserDefaults standardUserDefaults] setObject:@(_videosShouldLoop) forKey:kBMPLoopVideoKey];
     [[NSUserDefaults standardUserDefaults] setObject:@(_passcodeIsEnabled) forKey:kBMPEnablePasscodeKey];
+    [[NSUserDefaults standardUserDefaults] setObject:@(_proximityEnabled) forKey:kBMPProximityRecording];
+
     [[NSUserDefaults standardUserDefaults] setObject:_passcodeValue forKey:kBMPPasscodeValueKey];
 
     [[NSUserDefaults standardUserDefaults] synchronize];
